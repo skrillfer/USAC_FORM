@@ -1,0 +1,421 @@
+
+options{
+//MULTI=true;
+LOOKAHEAD=2;
+IGNORE_CASE=true;
+STATIC=false;
+}
+
+PARSER_BEGIN(gramatica)
+package ANALIZADOR_JAVACC;
+import Estructuras.*;
+import java.util.*;
+public class gramatica
+{
+    static String code="";
+    static int index=1;
+    
+    public String  initParser() throws ParseException, TokenMgrError
+    { 
+        return (inicio_PrincipalEncuesta());
+    }
+
+    public static void agregarCadena(String cadena){
+        code += cadena;
+    }
+
+}PARSER_END(gramatica)
+
+//_______________________$$$$$$ DECLARACION LEXICA  $$$$$_____________________
+//***********************palabras reservadas para hoja de ENCUESTA
+TOKEN:{
+
+    <TIPO: "tipo">
+    |<IDPREGUNTA: "idpregunta">
+    |<ETIQUETA: "etiqueta">
+    |<SUGERIR: "sugerir">
+    |<CODIGO_PRE: "codigo_pre">
+    |<CODIGO_POST: "codigo_post">
+    |<RESTRINGIR: "restringir">
+    |<RESTRINGIRMSN: "restringirmsn">
+    |<REQUERIDO: "requerido">
+    |<REQUERIDOMSN: "requeridomsn"> 
+    |<PREDETERMINADO: "predeterminado">  
+    |<APLICABLE: "aplicable">
+    |<LECTURA: "lectura">
+    |<CALCULO: "calculo">
+    |<REPETICION: "repeticion">
+    |<MULTIMEDIA: "multimedia">
+    |<APARIENCIA: "apariencia">
+    |<PARAMETRO: "parametro">
+    
+}
+
+//***********************palabras reservadas para hoja de OPCIONES
+TOKEN:{
+    <NOMBRE_LISTA: "nombre_lista">
+    |<NOMBRE: "nombre">
+    //|<ETIQUETA: "etiqueta">
+    //|<MULTIMEDIA: "multimedia">
+}
+
+//***********************palabras reservadas para hoja de CONFIGURACIONES
+TOKEN:{
+    <TITULO_FORMULARIO: "titulo_formulario">
+    |<IDFOM: "idform">
+    |<ESTILO: "estilo">
+    |<IMPORTAR: "importar">
+    |<CODIGO_PRINCIPAL: "codigo_principal">
+    |<CODIGO_GLOBAL: "codigo_global">
+}
+
+//***********************palabras reservadas para ESTILOS
+TOKEN:{
+    <PAGINA: "pagina">
+    |<TODO: "todo">
+    |<CUADRICULA: "cuadricula">
+    //|<MULTIMEDIA: "multimedia">
+}
+TOKEN:{
+    <ENCUESTA: "encuesta">
+    |<PREGUNTA_OPEN: "p~r~egunta">
+    |<PREGUNTA_CLOSE: "pr~egu~nt~a">
+    |<SEPARADOR: "~">
+}
+//************************tipos de datos
+
+/*TOKEN:{
+    <TEXTO: "texto">
+    |<ENTERO: "entero">
+    |<DECIMAL: "decimal">
+    |<RANGO: "rango">
+    |<CONDICION: "condicion">
+    |<FECHA: "fecha">
+    |<HORA: "hora">
+    |<FECHA_HORA: "fechahora">
+    |<SELECCION_UNO: "seleccion_uno">
+    |<SELECCION_MULTIPLES: "seleccion_multiples">
+    |<NOTA: "nota">
+    |<FICHERO: "fichero">
+    |<CALCULAR: "calcular">
+    |<INICIAR_AGRUPACION: "iniciar_agrupacion">
+    |<FINALIZAR_AGRUPACION: "finalizar_agrupacion">
+    |<INICIAR_CICLO: "iniciar_ciclo">
+    |<FINALIZAR_CICLO: "finalizar_ciclo">
+}*/
+
+//***********************simbolos 
+TOKEN:{
+    <APAR: "(" >
+    |<CPAR: ")" >
+    |<ALLA: "{" >
+    |<CLLA: "}" >
+    |<COMA: ","> 
+    |<PYC: ";"> 
+    |<DSPTS: ":"> 
+    |<PTO: "."> 
+    |<IG_IG: "==">
+    |<IGUAL: "="> 
+    |<DIF: "!=">
+    |<MENQ: "<">
+    |<MAYQ: ">">
+    |<MENIQ: "<=">
+    |<MAYIQ: ">=">
+    |<SUCC: "++">
+    |<DECC: "--">
+    |<MAS: "+">
+    |<MENOS: "-">
+    |<POR: "*">
+    |<DIV: "/">
+    |<POT: "^">
+    |<NOT: "!">
+    |<AND: "&&">
+    |<OR: "||">
+    |<COM_S: "\'">
+    
+
+}
+
+TOKEN:{
+    <BOOLEAN_LITERAL: "verdadero" | "falso" >
+    |< NUMBER: (["0"-"9"])+ ( "." (["0"-"9"])+ )? >
+    |<ID:     ["a"-"z","A"-"Z"] (["a"-"z","A"-"Z","0"-"9","_"])*>
+    |<VAR:    ["@"]["a"-"z","A"-"Z"] (["a"-"z","A"-"Z","0"-"9","_"])*>
+    |<STRING: "\"" (~["\"","\n","\r"])* "\""> //"\""  ("\\" ("\\" | "n" | "r" | "'") | ~["\\","\n","\r","\""] )* "\"">
+    |<CHA_R : ["#"-"/"]> 
+}
+
+SKIP:
+{
+    " "|"\r\n"|"\t"|"\n" {System.out.println("saltando");}
+}
+
+//**************************DECLARACION SINTACTICA******************************
+
+//*********************Para LIBRO DE ENCUESTA***********************************
+String inicio_PrincipalEncuesta():{} 
+{
+    ( Pregunta() )+ {return "";}
+}
+
+String Pregunta():{}
+{
+     <PREGUNTA_OPEN>   AtrS_Basic_Encuesta() {return "talega";}
+}
+
+String AtrS_Basic_Encuesta():{}
+{
+    (  Atr_BasicoEncuesta() <SEPARADOR> Valores() <SEPARADOR> <SEPARADOR> Atr_BasicoEncuesta() )*   <PREGUNTA_CLOSE> {return "";}
+}
+
+       
+String Atr_BasicoEncuesta():{ Token tk1=null;}
+{
+    (tk1=<TIPO>
+    |tk1=<IDPREGUNTA>
+    |tk1=<ETIQUETA>
+    |tk1=<SUGERIR>
+    |tk1=<CODIGO_PRE>
+    |tk1=<CODIGO_POST>
+    |tk1=<RESTRINGIR>
+    |tk1=<RESTRINGIRMSN>
+    |tk1=<REQUERIDO>
+    |tk1=<REQUERIDOMSN>
+    |tk1=<PREDETERMINADO>
+    |tk1=<APLICABLE>
+    |tk1=<LECTURA>
+    |tk1=<CALCULO>
+    |tk1=<REPETICION>
+    |tk1=<MULTIMEDIA>
+    |tk1=<APARIENCIA>
+    |tk1=<PARAMETRO>) {return tk1.image;}
+}
+
+/*String inicio_Principal():{} 
+{
+    <MENQ> <PREGUNTA> <MAYQ>  atributosBasicos(){return "talega";}
+}
+
+void atributosBasicos():{}
+{
+    (<MENQ> atributoBasico() <MAYQ> Valores() <MENQ><DIV> atributoBasico() <MAYQ> )* <MENQ> <DIV> <PREGUNTA> <MAYQ>
+}
+*/
+
+void Valores():{}
+{
+    lista_id(){} | Log_E()
+}
+
+
+void lista_id():{}
+{
+    ( aceptoID() | <CHA_R>  | aceptoString() )+
+}
+
+
+String aceptoID():{Token tk1=null;}
+{
+   tk1=<ID> { return tk1.image; }
+}
+
+String aceptoString():{Token tk1=null;}
+{
+   tk1=<STRING> { return tk1.image; }
+}
+
+String aceptoNumero():{Token tk1=null;}
+{
+    tk1=<NUMBER> { return tk1.image; }
+}
+
+String aceptoBooleano():{Token tk1=null;}
+{
+    tk1=<BOOLEAN_LITERAL> { return tk1.image; }
+}
+
+String aceptoFecha():{Token tk1,tk2,tk3=null;}
+{
+    tk1=<NUMBER> <DIV> tk2=<NUMBER> <DIV> tk3=<NUMBER>{ return tk1.image+"/"+tk2.image+"/"+tk3.image; }
+}
+
+
+void atributoBasico():{}
+
+{
+    <TIPO>
+    |<IDPREGUNTA>
+    |<ETIQUETA>
+    |<SUGERIR>
+    |<CODIGO_PRE>
+    |<CODIGO_POST>
+    |<RESTRINGIR>
+    |<RESTRINGIRMSN>
+    |<REQUERIDO>
+    |<REQUERIDOMSN>
+    |<PREDETERMINADO>
+    |<APLICABLE>
+    |<LECTURA>
+    |<CALCULO>
+    |<REPETICION>
+    |<MULTIMEDIA>
+    |<APARIENCIA>
+    |<PARAMETRO>
+}
+
+
+String Log_E():
+{
+    String n1,n2,datax="";
+}
+{
+    n1=Log_F() (<OR> n2=Log_E() { datax+=n1+"||"+n2; })*
+    {
+        if(datax==""){
+            return n1;
+        }else{
+            return datax;
+        }
+    }
+}
+//_____________________________________________________________________________
+String Log_F():
+{
+    String n1,n2,datax="";
+}
+{
+    n1=Log_T() (<AND> n2=Log_F()  { datax+=n1+"&&"+n2; })*
+    {
+        if(datax==""){
+            return n1;
+        }else{
+            return datax;
+        }
+    }
+}
+
+//______________________________________________________________________________
+
+String Log_T():
+{   String datax="";
+    String n1="";}
+{
+    (<NOT> n1=Log_E() { datax+="!"+n1; }
+    |n1=Relacional())
+    {
+        if(datax==""){
+            return n1;
+        }else{
+            return datax;
+        }
+    }
+}
+
+//______________________________________________________________________________
+String Relacional():
+{
+    String str1; String n1; String n2;
+    String datax="";
+}
+{
+    (
+    n1=expr()   
+       (str1=OpRel() n2=expr()    { datax+=n1+str1+n2; }
+        )?
+    )
+    {
+        if(datax==""){
+            return n1;
+        }else{
+            return datax;
+        }
+    }
+}
+//______________________________________________________________________________
+String OpRel():
+{String op="";}
+{
+    (<IG_IG> {op="==";} |<DIF>{op="!";}|<MENQ>{op="<";}|<MENIQ>{op="<=";}|<MAYQ>{op=">";}|<MAYIQ>{op=">=";}) {return op;}
+}
+
+//_____________________________Expresion Aritmetica_____________________________
+String expr():
+{
+    String n1;
+    String n2;
+    String datax="";
+}
+{
+    (n1=ATT() ( <MAS> n2=expr()   { datax+=n1+"+"+n2; } 
+              |<MENOS> n2=expr()  { datax+=n1+"-"+n2; } )*) 
+    {
+        if(datax==""){
+            return n1;
+        }else{
+            return datax;
+        }
+    }
+}
+
+
+String ATT():
+{
+    String n1;
+    String n2;
+    String datax="";
+}
+{
+    (n1=AFF() ( <POR> n2=ATT()   { datax+=n1+"*"+n2; } 
+              |<DIV> n2=ATT()    { datax+=n1+"/"+n2; })*)
+    {
+        if(datax==""){
+            return n1;
+        }else{
+            return datax;
+        }
+    }         
+}
+
+String AFF():
+{
+    String n1;
+    String n2;
+    String datax="";
+}
+{
+    (n1=unary() (<POT> n2=AFF() { datax+=n1+"^"+n2;  } )*)
+    {
+        if(datax==""){
+            return n1;
+        }else{
+            return datax;
+        }
+    }
+}
+
+String unary():
+{
+    String datax;
+    String nodo;   
+}
+{
+    (<MENOS> nodo=element() { datax= "-" +nodo; }  | datax=element()) {return datax;}
+}
+
+String element():
+{
+    String datax="";
+}
+{
+    ( datax = DatoLiteral()   | <APAR> datax =Log_E() <CPAR>) {return datax;}
+}
+
+
+String DatoLiteral():{String datax="";}
+{
+    ( datax=aceptoID() 
+    | datax=aceptoNumero() 
+    | datax=aceptoBooleano()
+    | datax=aceptoString()
+    | datax=aceptoFecha() ){return datax;}
+}
