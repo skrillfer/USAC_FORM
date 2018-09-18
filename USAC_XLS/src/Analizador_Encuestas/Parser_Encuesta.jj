@@ -1,0 +1,91 @@
+
+options {
+  LOOKAHEAD = 1;
+  CHOICE_AMBIGUITY_CHECK = 2;
+  OTHER_AMBIGUITY_CHECK = 1;
+  STATIC = true;
+  DEBUG_PARSER = false;
+  DEBUG_LOOKAHEAD = false;
+  DEBUG_TOKEN_MANAGER = false;
+  ERROR_REPORTING = true;
+  JAVA_UNICODE_ESCAPE = false;
+  UNICODE_INPUT = false;
+  IGNORE_CASE = false;
+  USER_TOKEN_MANAGER = false;
+  USER_CHAR_STREAM = false;
+  BUILD_PARSER = true;
+  BUILD_TOKEN_MANAGER = true;
+  SANITY_CHECK = true;
+  FORCE_LA_CHECK = false;
+}
+
+PARSER_BEGIN(ParserEncuesta)
+package Analizador_Encuesta;
+
+public class ParserEncuesta {
+    
+    public void  initParser() throws ParseException, TokenMgrError
+    { 
+        Inicio();
+    }
+
+
+}
+
+PARSER_END(ParserEncuesta)
+
+///LEXICO
+SKIP:
+{
+    " "|"\r\n"|"\t"|"\n"
+}
+
+TOKEN :
+{
+<ENCUESTA_OPEN: "e~ncu~esta">
+|<ENCUESTA_CLOSE: "en~cues~ta">
+|<PREGUNTA_OPEN: "p~r~egunta">
+|<PREGUNTA_CLOSE: "pr~egu~nt~a">
+|<TIPO_OPEN: "tip~o">
+|<TIPO_CLOSE: "~ti~po">
+|<CUALQUIERA: (~["~"])+ >
+}
+
+
+
+void Inicio() :
+{}
+{
+    Encuesta() <EOF>
+}
+
+void Encuesta() :
+{}
+{
+    (Fila())*
+}
+
+void Fila():
+{}
+{
+    <PREGUNTA_OPEN> Pregunta() <PREGUNTA_CLOSE> //o agrupacion o preguntas
+}
+
+void Pregunta():
+{}
+{
+    (Columna())*
+}
+
+void Columna():
+{}
+{
+    Tipo()
+}
+
+/*----------------------------___COLUMNAS___----------------------------------*/
+void Tipo():
+{Token t;}
+{
+    <TIPO_OPEN> t=<CUALQUIERA> <TIPO_CLOSE> {System.out.println(t.image); }
+}
