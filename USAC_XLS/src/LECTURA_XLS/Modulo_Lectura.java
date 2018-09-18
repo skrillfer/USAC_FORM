@@ -103,7 +103,7 @@ public class Modulo_Lectura {
         //============================Variables a usar======================
         int contador = 0;
         Row row_encabezado = null;
-        String TEXTO = "<encuesta>\n";
+        String TEXTO = "e~ncu~esta\n";
         String TEXTO_TMP1="";
         String TEXTO_TMP2="";
         //==================================================================
@@ -129,7 +129,7 @@ public class Modulo_Lectura {
                 } else {
                     TEXTO_TMP1=TEXTO;
                     
-                    TEXTO += TAB + "pregunta~\n";
+                    TEXTO += TAB + "p~r~egunta\n";
                     ENTRE = false;
                     AGRUP = false;
                     ESCIC = false;
@@ -152,13 +152,13 @@ public class Modulo_Lectura {
                     tmp_cell=cellIterator.next();
                 } catch (Exception e) {
                     TEXTO=TEXTO_TMP1;
-                    System.out.println("FRENO");
+                    //System.out.println("FRENO");
                     break;
                 }
                 
                 if(tmp_cell==null || tmp_cell.getStringCellValue().trim().equals("")){
                     TEXTO=TEXTO_TMP1;
-                    System.out.println("FRENO");
+                    //System.out.println("FRENO");
                     break;
                 }else{
                     cellIterator = row.cellIterator();
@@ -216,13 +216,13 @@ public class Modulo_Lectura {
                     //System.out.print(cell.getStringCellValue() + " | ");
                 }
                 if (row_encabezado != null && ENTRE && !AGRUP && !ESCIC) {
-                    TEXTO += TAB + "pregunta~~\n";
+                    TEXTO += TAB + "pr~egu~nt~a\n";
                 }
             }
         } catch (Exception e) {
             //System.out.println(e.getMessage()+"-"+e.getClass());
         }
-        TEXTO += "</encuesta>\n";
+        TEXTO += "en~cues~ta\n";
         System.out.println("" + TEXTO);
     }
 

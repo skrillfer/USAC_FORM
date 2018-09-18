@@ -1,0 +1,72 @@
+
+options{
+//MULTI=true;
+
+LOOKAHEAD=2;
+IGNORE_CASE=true;
+STATIC=false;
+}
+PARSER_BEGIN(gram_opciones)
+package ANALIZADOR_OPCIONES;
+import Estructuras.*;
+import java.util.*;
+import GeneracionXFORM.*;
+
+public class gram_opciones
+{
+    static String code="";
+    static int index=1;
+    static Generador_XForm generadorXform = new  Generador_XForm();
+    
+    public String  initParser() throws ParseException, TokenMgrError
+    { 
+        return (inicio_PrincipalOpciones());
+    }
+
+    public static void agregarCadena(String cadena){
+        code += cadena;
+    }
+
+}PARSER_END(gram_opciones)
+
+//***********************palabras reservadas para hoja de OPCIONES
+TOKEN:{
+    <NOMBRE_LISTA: "nombre_lista">
+    |<NOMBRE: "nombre">
+    |<ETIQUETA: "etiqueta">
+    |<MULTIMEDIA: "multimedia">
+   
+}
+
+TOKEN:{
+    <LETRA: ["a"-"z","A"-"Z"]>
+    |<DIGITO: ["0"-"9"]>
+    |<SIMBOLOS: ["?","!","}","[",">","<"]>
+}
+
+TOKEN:{
+    <IDENTIFICADOR: <LETRA>(<LETRA>|<DIGITO>)* >
+    <PALABRA:       <LETRA>(<LETRA>|<DIGITO>) >
+}
+
+/* 
+TOKEN:{
+    <LETRA: ["a"-"z","A"-"Z"]> :S1
+    |<DIGITO: ["0"-"9"]>
+    |<ESPACIO:" ">
+}
+
+
+<S1> MORE : {
+    <LETRA>|<DIGITO> {} : S1
+}
+
+<S1> TOKEN:{
+    <ESPACIO>: DEFAULT
+}
+*/
+
+String inicio_PrincipalOpciones():{Token tk1=null;}
+{
+    tk1=<IDENTIFICADOR> { System.out.println(tk1.image); return "";}
+}

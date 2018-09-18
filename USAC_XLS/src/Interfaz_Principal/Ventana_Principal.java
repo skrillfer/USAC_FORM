@@ -5,9 +5,11 @@
  */
 package Interfaz_Principal;
 
-import ANALIZADOR_JAVACC.gramatica;
+
+import ANALIZADOR_OPCIONES.gram_opciones;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStream;
 import javax.swing.JFrame;
 
 /**
@@ -33,13 +35,23 @@ public class Ventana_Principal extends JFrame{
     
     
     public void probarParser() throws FileNotFoundException{
-        try {
+        /*try {
             gramatica parser = new gramatica(new FileReader("/home/fernando/NetBeansProjects/USAC_FORM/Lenguaje_XLS/carga.txt"));
             System.out.println(parser.initParser());
         } catch (Exception e) {
             System.err.println(e.getMessage());
-        }
+        }*/
         
+        
+        /*
+        try {
+            Simple1 parser = new Simple1(new FileReader("/home/fernando/NetBeansProjects/USAC_FORM/Lenguaje_XLS/prueba_cnt_col.txt"));
+            parser.initParser();
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+          */
+        //ParserEncuesta lll;
     }
     
     
