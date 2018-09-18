@@ -70,7 +70,8 @@ TOKEN :
 |<Ccor : "]" >
 |<Punto: ".">
 |<PuntoP: "..">
-|<Cualquiera : (~["#",".", "[", "]"])+ >
+|<Cualquiera : (~["#",".","\"", "[", "]"])+ >
+|<string_literal: "\"" (~["\""])* "\"">
 }
 
 
@@ -107,7 +108,9 @@ String VALOR() :
 {Token t;}
 {
 t = <Cualquiera>                    {return "\"" + t.image + "\"" + " ";}
-|<Numeral> <Acor>  t=<ID>  <Ccor>   {return "+ "+t.image ;}
+|<Numeral> <Acor>  t=<ID>  <Ccor>   {return "+" + t.image ;}
 | <Punto>                           {return "padre ";}
 | <PuntoP>                          {return "madre";}
+| t=<string_literal>                {return "+"+t.image;}
+
 }

@@ -75,9 +75,10 @@ public class Generador_XForm {
     
     
     
-    public void generar_Pregunta(){
+    public Pregunta generar_Pregunta(){
         Pregunta preg = new Pregunta();
         Pregunta_Actual=preg;
+        return preg;
     }
     
     public void agregar_Pregunta(){
@@ -89,7 +90,6 @@ public class Generador_XForm {
                 Lista_Errores.add(new ERROR(String.valueOf(Linea_Actual),String.valueOf(Columna_Actual),"Semantico","La pregunta no tiene atributos"));
             }
             Pregunta_Actual=null;
-            
         }else{
             System.err.println("Pregunta Actual es Null");
         }

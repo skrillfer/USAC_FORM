@@ -20,10 +20,14 @@ options {
 }
 
 PARSER_BEGIN(ParserEncuesta)
-package Analizador_Encuesta;
+package Analizador_Encuestas;
+import Estructuras.*;
+import GeneracionXFORM.*;
 
 public class ParserEncuesta {
     
+    private static Generador_XForm generador = new Generador_XForm();
+
     public void  initParser() throws ParseException, TokenMgrError
     { 
         Inicio();
@@ -42,13 +46,52 @@ SKIP:
 
 TOKEN :
 {
-<ENCUESTA_OPEN: "e~ncu~esta">
-|<ENCUESTA_CLOSE: "en~cues~ta">
-|<PREGUNTA_OPEN: "p~r~egunta">
-|<PREGUNTA_CLOSE: "pr~egu~nt~a">
-|<TIPO_OPEN: "tip~o">
-|<TIPO_CLOSE: "~ti~po">
-|<CUALQUIERA: (~["~"])+ >
+<ENCUESTA_OPEN: "<encuesta>">
+|<ENCUESTA_CLOSE: "</encuesta>">
+|<PREGUNTA_OPEN: "<pregunta>">
+|<PREGUNTA_CLOSE: "</pregunta>">
+|<IDPREGUNTA_OPEN: "<idpregunta>">
+|<IDPREGUNTA_CLOSE: "</idpregunta>">
+
+|<ETIQUETA_OPEN: "<etiqueta>">
+|<ETIQUETA_CLOSE: "</etiqueta>">
+
+|<SUGERIR_OPEN: "<sugerir>">
+|<SUGERIR_CLOSE: "</sugerir>">
+|<CODIGOPRE_OPEN: "<codigo_pre>">
+|<CODIGOPRE_CLOSE: "</codigo_pre>">
+|<CODIGOPOST_OPEN: "<codigo_post>">
+|<CODIGOPOST_CLOSE: "</codigo_post>">
+|<RESTRINGIR_OPEN: "<restringir>">
+|<RESTRINGIR_CLOSE: "</restringir>">
+|<RESTRINGIRMSN_OPEN: "<restringirmsn>">
+|<RESTRINGIRMSN_CLOSE: "</restringirmsn>">
+|<REQUERIDO_OPEN: "<requerido>">
+|<REQUERIDO_CLOSE: "</requerido>">
+|<REQUERIDOMSN_OPEN: "<requeridomsn>">
+|<REQUERIDOMSN_CLOSE: "</requeridomsn>">
+|<PREDETERMINADO_OPEN: "<predeterminado>">
+|<PREDETERMINADO_CLOSE: "</predeterminado>">
+|<APLICABLE_OPEN: "<aplicable>">
+|<APLICABLE_CLOSE: "</aplicable>">
+|<LECTURA_OPEN: "<lectura>">
+|<LECTURA_CLOSE: "</lectura>">
+|<CALCULO_OPEN: "<calculo>">
+|<CALCULO_CLOSE: "</calculo>">
+|<REPETICION_OPEN: "<repeticion>">
+|<REPETICION_CLOSE: "</repeticion>">
+|<MULTIMEDIA_OPEN: "<multimedia>">
+|<MULTIMEDIA_CLOSE: "</multimedia>">
+|<APARIENCIA_OPEN: "<apariencia>">
+|<APARIENCIA_CLOSE: "</apariencia>">
+|<PARAMETRO_OPEN: "<parametro>">
+|<PARAMETRO_CLOSE: "</parametro>">
+
+
+|<TIPO_OPEN: "<tipo>">
+|<TIPO_CLOSE: "</tipo>">
+|<VALOR: "~" (~["~"])* "~">
+
 }
 
 
@@ -62,13 +105,18 @@ void Inicio() :
 void Encuesta() :
 {}
 {
-    (Fila())*
+    <ENCUESTA_OPEN>(Fila())*<ENCUESTA_CLOSE>
 }
 
 void Fila():
 {}
 {
     <PREGUNTA_OPEN> Pregunta() <PREGUNTA_CLOSE> //o agrupacion o preguntas
+    {
+        /*Se crea la pregunta*/  
+        //Pregunta preg 
+        Pregunta n_pre = generador.generar_Pregunta();
+    }
 }
 
 void Pregunta():
@@ -87,5 +135,25 @@ void Columna():
 void Tipo():
 {Token t;}
 {
-    <TIPO_OPEN> t=<CUALQUIERA> <TIPO_CLOSE> {System.out.println(t.image); }
+    <TIPO_OPEN> t=<VALOR> <TIPO_CLOSE> {System.out.println(t.image); }
 }
+
+void IdPregunta():
+{Token t;}
+{
+    <IDPREGUNTA_OPEN> t=<VALOR> <IDPREGUNTA_CLOSE> {System.out.println(t.image); }
+}
+
+void Calculo():
+{Token t;}
+{
+    <CALCULO_OPEN> t=<VALOR> <CALCULO_CLOSE> {System.out.println(t.image); }
+}
+
+
+void Etiqueta():
+{Token t;}
+{
+    <ETIQUETA_OPEN> t=<VALOR> <ETIQUETA_CLOSE> {System.out.println(t.image); }
+}
+

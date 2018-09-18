@@ -24,6 +24,8 @@ public interface Simple1Constants {
   int PuntoP = 10;
   /** RegularExpression Id. */
   int Cualquiera = 11;
+  /** RegularExpression Id. */
+  int string_literal = 12;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -42,6 +44,7 @@ public interface Simple1Constants {
     "\".\"",
     "\"..\"",
     "<Cualquiera>",
+    "<string_literal>",
   };
 
 }

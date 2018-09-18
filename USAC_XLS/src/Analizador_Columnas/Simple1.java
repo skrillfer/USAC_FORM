@@ -20,6 +20,7 @@ public class Simple1 implements Simple1Constants {
       case Punto:
       case PuntoP:
       case Cualquiera:
+      case string_literal:
         ;
         break;
       default:
@@ -47,6 +48,7 @@ String aux;
     case Punto:
     case PuntoP:
     case Cualquiera:
+    case string_literal:
       Cad = VALOR();
       aux = CNT_2();
                               Cad = Cad + aux;  {if (true) return Cad;}
@@ -75,7 +77,7 @@ String aux;
       jj_consume_token(Acor);
       t = jj_consume_token(ID);
       jj_consume_token(Ccor);
-                                     {if (true) return "+ "+t.image ;}
+                                     {if (true) return "+" + t.image ;}
       break;
     case Punto:
       jj_consume_token(Punto);
@@ -84,6 +86,10 @@ String aux;
     case PuntoP:
       jj_consume_token(PuntoP);
                                      {if (true) return "madre";}
+      break;
+    case string_literal:
+      t = jj_consume_token(string_literal);
+                                     {if (true) return "+"+t.image;}
       break;
     default:
       jj_la1[2] = jj_gen;
@@ -109,7 +115,7 @@ String aux;
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0xe40,0xe41,0xe40,};
+      jj_la1_0 = new int[] {0x1e40,0x1e41,0x1e40,};
    }
 
   /** Constructor with InputStream. */
@@ -247,7 +253,7 @@ String aux;
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[12];
+    boolean[] la1tokens = new boolean[13];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -261,7 +267,7 @@ String aux;
         }
       }
     }
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < 13; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
