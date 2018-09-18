@@ -27,7 +27,7 @@ import GeneracionXFORM.*;
 public class ParserEncuesta {
     
     private static Generador_XForm generador = new Generador_XForm();
-
+    private static String nm="";
     public void  initParser() throws ParseException, TokenMgrError
     { 
         Inicio();
@@ -76,7 +76,7 @@ TOKEN :
 |<APLICABLE_CLOSE: "</aplicable>">
 |<LECTURA_OPEN: "<lectura>">
 |<LECTURA_CLOSE: "</lectura>">
-|<CALCULO_OPEN: "<calculo>">
+|<CALCULO_OPEN: "<calculo>">      
 |<CALCULO_CLOSE: "</calculo>">
 |<REPETICION_OPEN: "<repeticion>">
 |<REPETICION_CLOSE: "</repeticion>">
@@ -86,6 +86,8 @@ TOKEN :
 |<APARIENCIA_CLOSE: "</apariencia>">
 |<PARAMETRO_OPEN: "<parametro>">
 |<PARAMETRO_CLOSE: "</parametro>">
+|<RUTA_OPEN: "<ruta>">
+|<RUTA_CLOSE: "</ruta>">
 
 
 |<TIPO_OPEN: "<tipo>">
@@ -105,17 +107,22 @@ void Inicio() :
 void Encuesta() :
 {}
 {
-    <ENCUESTA_OPEN>(Fila())*<ENCUESTA_CLOSE>
+    <ENCUESTA_OPEN>(Fila())*<ENCUESTA_CLOSE> 
+    {
+        //Se genera el codigo XFORM
+        generador.generar_CODIGO_XFORM();
+    }
 }
 
 void Fila():
 {}
 {
-    <PREGUNTA_OPEN> Pregunta() <PREGUNTA_CLOSE> //o agrupacion o preguntas
+    (<PREGUNTA_OPEN> {Pregunta n_pre = generador.generar_Pregunta();} 
+    Pregunta() <PREGUNTA_CLOSE> )//o agrupacion o preguntas
     {
-        /*Se crea la pregunta*/  
-        //Pregunta preg 
-        Pregunta n_pre = generador.generar_Pregunta();
+        //Se crea la pregunta
+        
+        generador.agregar_Pregunta();
     }
 }
 
@@ -126,22 +133,96 @@ void Pregunta():
 }
 
 void Columna():
-{}
+{Token t; }
 {
-    Tipo()
+    (
+        t=Tipo()       
+       |t=IdPregunta() 
+       |t=Etiqueta() 
+       |t=RequeridoMsn()
+       |t=Ruta()
+       |t=Requerido()
+       |t=Restringir()
+       |t=Predeterminado()
+       |t=Codigo_Pre()
+       |t=Codigo_Post()
+       |t=Lectura()
+    )
+    {
+        try {
+            t.image = t.image.substring(1, t.image.length()-1);
+        } catch (Exception e) {}
+        //Para agregar el atributo se setea la linea
+        generador.set_linea_actual(t.beginLine);
+        //Para agregar el atributo se setea la columna
+        generador.set_linea_actual(t.beginColumn);
+        //Se Agregar el Atributo a la pregunta
+        generador.agregarAtributo(nm,t.image);
+
+        
+    }
 }
 
 /*----------------------------___COLUMNAS___----------------------------------*/
-void Tipo():
+Token Tipo():
 {Token t;}
 {
-    <TIPO_OPEN> t=<VALOR> <TIPO_CLOSE> {System.out.println(t.image); }
+    <TIPO_OPEN> t=<VALOR> <TIPO_CLOSE>             {nm="tipo"; return t;}
 }
 
-void IdPregunta():
+Token IdPregunta():
 {Token t;}
 {
-    <IDPREGUNTA_OPEN> t=<VALOR> <IDPREGUNTA_CLOSE> {System.out.println(t.image); }
+    <IDPREGUNTA_OPEN> t=<VALOR> <IDPREGUNTA_CLOSE> { nm="idpregunta"; return t;}
+}
+
+Token RequeridoMsn():
+{Token t;}
+{
+    <REQUERIDOMSN_OPEN> t=<VALOR> <REQUERIDOMSN_CLOSE> { nm="requeridomsn"; return t;}
+}
+
+Token Ruta():
+{Token t;}
+{
+    <RUTA_OPEN> t=<VALOR> <RUTA_CLOSE> { nm="ruta"; return t;}
+}
+
+Token Requerido():
+{Token t;}
+{
+    <REQUERIDO_OPEN> t=<VALOR> <REQUERIDO_CLOSE> { nm="requerido"; return t;}
+}
+
+Token Lectura():
+{Token t;}
+{
+    <LECTURA_OPEN> t=<VALOR> <LECTURA_CLOSE> { nm="lectura"; return t;}
+}
+
+
+Token Restringir():
+{Token t;}
+{
+    <RESTRINGIR_OPEN> t=<VALOR> <RESTRINGIR_CLOSE> { nm="restringir"; return t;}
+}
+
+Token Predeterminado():
+{Token t;}
+{
+    <PREDETERMINADO_OPEN> t=<VALOR> <PREDETERMINADO_CLOSE> { nm="predeterminado"; return t;}
+}
+
+Token Codigo_Pre():
+{Token t;}
+{
+    <CODIGOPRE_OPEN> t=<VALOR> <CODIGOPRE_CLOSE> { nm="codigo_pre"; return t;}
+}
+
+Token Codigo_Post():
+{Token t;}
+{
+    <CODIGOPOST_OPEN> t=<VALOR> <CODIGOPOST_CLOSE> { nm="codigo_pre"; return t;}
 }
 
 void Calculo():
@@ -151,9 +232,10 @@ void Calculo():
 }
 
 
-void Etiqueta():
+Token Etiqueta():
 {Token t;}
 {
-    <ETIQUETA_OPEN> t=<VALOR> <ETIQUETA_CLOSE> {System.out.println(t.image); }
+    <ETIQUETA_OPEN> t=<VALOR> <ETIQUETA_CLOSE> {nm="etiqueta"; return t; }
 }
+
 

@@ -87,11 +87,15 @@ public interface ParserEncuestaConstants {
   /** RegularExpression Id. */
   int PARAMETRO_CLOSE = 42;
   /** RegularExpression Id. */
-  int TIPO_OPEN = 43;
+  int RUTA_OPEN = 43;
   /** RegularExpression Id. */
-  int TIPO_CLOSE = 44;
+  int RUTA_CLOSE = 44;
   /** RegularExpression Id. */
-  int VALOR = 45;
+  int TIPO_OPEN = 45;
+  /** RegularExpression Id. */
+  int TIPO_CLOSE = 46;
+  /** RegularExpression Id. */
+  int VALOR = 47;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -141,6 +145,8 @@ public interface ParserEncuestaConstants {
     "\"</apariencia>\"",
     "\"<parametro>\"",
     "\"</parametro>\"",
+    "\"<ruta>\"",
+    "\"</ruta>\"",
     "\"<tipo>\"",
     "\"</tipo>\"",
     "<VALOR>",

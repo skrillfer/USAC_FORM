@@ -6,7 +6,7 @@
 package Interfaz_Principal;
 
 import Analizador_Columnas.Simple1;
-import Analizador_Encuesta.*;
+import Analizador_Encuestas.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import javax.swing.JFrame;
@@ -40,24 +40,28 @@ public class Ventana_Principal extends JFrame{
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }*/
-        /*
+        
+        
         try {
             ParserEncuesta parser_encuesta = new ParserEncuesta(new FileReader("/home/fernando/NetBeansProjects/USAC_FORM/Lenguaje_XLS/prueba.txt"));
             parser_encuesta.initParser();
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
-        */
+        
+        /*
         try {
             Simple1 parser = new Simple1(new FileReader("/home/fernando/NetBeansProjects/USAC_FORM/Lenguaje_XLS/prueba_cnt_col.txt"));
             parser.initParser();
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
+        */
           
         //ParserEncuesta lll;
+       
     }
     
-    
+   
     
 }

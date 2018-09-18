@@ -26,7 +26,7 @@ options {
   LOOKAHEAD = 1;
   CHOICE_AMBIGUITY_CHECK = 2;
   OTHER_AMBIGUITY_CHECK = 1;
-  STATIC = true;
+  STATIC = false;
   DEBUG_PARSER = false;
   DEBUG_LOOKAHEAD = false;
   DEBUG_TOKEN_MANAGER = false;
@@ -46,10 +46,11 @@ PARSER_BEGIN(Simple1)
 package Analizador_Columnas;
 
 public class Simple1 {
-
-    public void  initParser() throws ParseException, TokenMgrError
+    private static int CONT=-1;
+    public String  initParser() throws ParseException, TokenMgrError
     { 
-        contenido_etiqueta();
+        CONT=-1;
+        return (contenido_etiqueta());
     }
 
 }
@@ -79,10 +80,10 @@ TOKEN :
 
 
 
-void contenido_etiqueta():
+String contenido_etiqueta():
 {String Cad;}
 {
-    (Cad = CNT() {System.out.println(Cad);})+ <EOF> 
+    (Cad = CNT() { return Cad; })+ <EOF> 
 }
 
 
@@ -107,10 +108,72 @@ String aux;}
 String VALOR() :
 {Token t;}
 {
-t = <Cualquiera>                    {return "\"" + t.image + "\"" + " ";}
-|<Numeral> <Acor>  t=<ID>  <Ccor>   {return "+" + t.image ;}
-| <Punto>                           {return "padre ";}
-| <PuntoP>                          {return "madre";}
-| t=<string_literal>                {return "+"+t.image;}
+t = <Cualquiera>                    {
+                                        CONT++;
+                                        t.image = "\"" + t.image + "\"" + " ";
+                                        if(CONT>0){
+                                            t.image= "+" + t.image;
+                                        }    
+                                        return t.image;
+                                    }
+|<Numeral> <Acor>  t=<ID>  <Ccor>   {
+                                        CONT++;
+                                        if(CONT>0){
+                                            t.image= "+" + t.image;
+                                        }        
+                                        return t.image ;
+                                    }
+| <Punto>                           {
+                                        CONT++;
+                                        return "padre ";
+                                    }
+| <PuntoP>                          {
+                                        CONT++;
+                                        return "madre";
+                                    }
+| t=<string_literal>                {
+                                        CONT++;
+                                        if(CONT>0){
+                                            t.image= "+" + t.image;
+                                        } 
+                                        return t.image;
+                                    }
+|t=<ID>                             {
+                                        CONT++;
+                                        t.image = "\"" + t.image + "\"";
+                                        if(CONT>0){
+                                            t.image= "+" + t.image;
+                                        } 
+                                        return t.image;
+                                    }
+
+}
+
+
+String VALOR_2() :
+{Token t;}
+{
+t = <Cualquiera>                    {
+                                        
+                                        return t.image;
+                                    }
+|<Numeral> <Acor>  t=<ID>  <Ccor>   {
+                                                
+                                        return t.image ;
+                                    }
+| <Punto>                           {
+                                        
+                                        return "";
+                                    }
+| <PuntoP>                          {
+                                        
+                                        return "";
+                                    }
+| t=<string_literal>                {
+                                        return t.image;
+                                    }
+|t=<ID>                             {
+                                        return t.image;
+                                    }
 
 }

@@ -6,7 +6,7 @@ import GeneracionXFORM.*;
 public class ParserEncuesta implements ParserEncuestaConstants {
 
     private static Generador_XForm generador = new Generador_XForm();
-
+    private static String nm="";
     public void  initParser() throws ParseException, TokenMgrError
     {
         Inicio();
@@ -32,21 +32,33 @@ public class ParserEncuesta implements ParserEncuestaConstants {
       Fila();
     }
     jj_consume_token(ENCUESTA_CLOSE);
+        //Se genera el codigo XFORM
+        generador.generar_CODIGO_XFORM();
   }
 
   static final public void Fila() throws ParseException {
     jj_consume_token(PREGUNTA_OPEN);
+                      Pregunta n_pre = generador.generar_Pregunta();
     Pregunta();
     jj_consume_token(PREGUNTA_CLOSE);
-        /*Se crea la pregunta*/
-        //Pregunta preg 
-        Pregunta n_pre = generador.generar_Pregunta();
+        //Se crea la pregunta
+
+        generador.agregar_Pregunta();
   }
 
   static final public void Pregunta() throws ParseException {
     label_2:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case IDPREGUNTA_OPEN:
+      case ETIQUETA_OPEN:
+      case CODIGOPRE_OPEN:
+      case CODIGOPOST_OPEN:
+      case RESTRINGIR_OPEN:
+      case REQUERIDO_OPEN:
+      case REQUERIDOMSN_OPEN:
+      case PREDETERMINADO_OPEN:
+      case RUTA_OPEN:
       case TIPO_OPEN:
         ;
         break;
@@ -59,24 +71,134 @@ public class ParserEncuesta implements ParserEncuestaConstants {
   }
 
   static final public void Columna() throws ParseException {
-    Tipo();
+ Token t;
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case TIPO_OPEN:
+      t = Tipo();
+      break;
+    case IDPREGUNTA_OPEN:
+      t = IdPregunta();
+      break;
+    case ETIQUETA_OPEN:
+      t = Etiqueta();
+      break;
+    case REQUERIDOMSN_OPEN:
+      t = RequeridoMsn();
+      break;
+    case RUTA_OPEN:
+      t = Ruta();
+      break;
+    case REQUERIDO_OPEN:
+      t = Requerido();
+      break;
+    case RESTRINGIR_OPEN:
+      t = Restringir();
+      break;
+    case PREDETERMINADO_OPEN:
+      t = Predeterminado();
+      break;
+    case CODIGOPRE_OPEN:
+      t = Codigo_Pre();
+      break;
+    case CODIGOPOST_OPEN:
+      t = Codigo_Post();
+      break;
+    default:
+      jj_la1[2] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+        try {
+            t.image = t.image.substring(1, t.image.length()-1);
+        } catch (Exception e) {}
+        //Para agregar el atributo se setea la linea
+        generador.set_linea_actual(t.beginLine);
+        //Para agregar el atributo se setea la columna
+        generador.set_linea_actual(t.beginColumn);
+        //Se Agregar el Atributo a la pregunta
+        generador.agregarAtributo(nm,t.image);
   }
 
 /*----------------------------___COLUMNAS___----------------------------------*/
-  static final public void Tipo() throws ParseException {
+  static final public Token Tipo() throws ParseException {
  Token t;
     jj_consume_token(TIPO_OPEN);
     t = jj_consume_token(VALOR);
     jj_consume_token(TIPO_CLOSE);
-                                        System.out.println(t.image);
+                                                    nm="tipo"; {if (true) return t;}
+    throw new Error("Missing return statement in function");
   }
 
-  static final public void IdPregunta() throws ParseException {
+  static final public Token IdPregunta() throws ParseException {
  Token t;
     jj_consume_token(IDPREGUNTA_OPEN);
     t = jj_consume_token(VALOR);
     jj_consume_token(IDPREGUNTA_CLOSE);
-                                                    System.out.println(t.image);
+                                                     nm="idpregunta"; {if (true) return t;}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public Token RequeridoMsn() throws ParseException {
+ Token t;
+    jj_consume_token(REQUERIDOMSN_OPEN);
+    t = jj_consume_token(VALOR);
+    jj_consume_token(REQUERIDOMSN_CLOSE);
+                                                         nm="requeridomsn"; {if (true) return t;}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public Token Ruta() throws ParseException {
+ Token t;
+    jj_consume_token(RUTA_OPEN);
+    t = jj_consume_token(VALOR);
+    jj_consume_token(RUTA_CLOSE);
+                                         nm="ruta"; {if (true) return t;}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public Token Requerido() throws ParseException {
+ Token t;
+    jj_consume_token(REQUERIDO_OPEN);
+    t = jj_consume_token(VALOR);
+    jj_consume_token(REQUERIDO_CLOSE);
+                                                   nm="requerido"; {if (true) return t;}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public Token Restringir() throws ParseException {
+ Token t;
+    jj_consume_token(RESTRINGIR_OPEN);
+    t = jj_consume_token(VALOR);
+    jj_consume_token(RESTRINGIR_CLOSE);
+                                                     nm="restringir"; {if (true) return t;}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public Token Predeterminado() throws ParseException {
+ Token t;
+    jj_consume_token(PREDETERMINADO_OPEN);
+    t = jj_consume_token(VALOR);
+    jj_consume_token(PREDETERMINADO_CLOSE);
+                                                             nm="predeterminado"; {if (true) return t;}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public Token Codigo_Pre() throws ParseException {
+ Token t;
+    jj_consume_token(CODIGOPRE_OPEN);
+    t = jj_consume_token(VALOR);
+    jj_consume_token(CODIGOPRE_CLOSE);
+                                                   nm="codigo_pre"; {if (true) return t;}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public Token Codigo_Post() throws ParseException {
+ Token t;
+    jj_consume_token(CODIGOPOST_OPEN);
+    t = jj_consume_token(VALOR);
+    jj_consume_token(CODIGOPOST_CLOSE);
+                                                     nm="codigo_pre"; {if (true) return t;}
+    throw new Error("Missing return statement in function");
   }
 
   static final public void Calculo() throws ParseException {
@@ -87,12 +209,13 @@ public class ParserEncuesta implements ParserEncuestaConstants {
                                               System.out.println(t.image);
   }
 
-  static final public void Etiqueta() throws ParseException {
+  static final public Token Etiqueta() throws ParseException {
  Token t;
     jj_consume_token(ETIQUETA_OPEN);
     t = jj_consume_token(VALOR);
     jj_consume_token(ETIQUETA_CLOSE);
-                                                System.out.println(t.image);
+                                                nm="etiqueta"; {if (true) return t;}
+    throw new Error("Missing return statement in function");
   }
 
   static private boolean jj_initialized_once = false;
@@ -105,7 +228,7 @@ public class ParserEncuesta implements ParserEncuestaConstants {
   static public Token jj_nt;
   static private int jj_ntk;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[2];
+  static final private int[] jj_la1 = new int[3];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -113,10 +236,10 @@ public class ParserEncuesta implements ParserEncuestaConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x80,0x0,};
+      jj_la1_0 = new int[] {0x80,0xa8a8a00,0xa8a8a00,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x800,};
+      jj_la1_1 = new int[] {0x0,0x2800,0x2800,};
    }
 
   /** Constructor with InputStream. */
@@ -137,7 +260,7 @@ public class ParserEncuesta implements ParserEncuestaConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -151,7 +274,7 @@ public class ParserEncuesta implements ParserEncuestaConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -168,7 +291,7 @@ public class ParserEncuesta implements ParserEncuestaConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -178,7 +301,7 @@ public class ParserEncuesta implements ParserEncuestaConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -194,7 +317,7 @@ public class ParserEncuesta implements ParserEncuestaConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -203,7 +326,7 @@ public class ParserEncuesta implements ParserEncuestaConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 2; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
   }
 
   static private Token jj_consume_token(int kind) throws ParseException {
@@ -254,12 +377,12 @@ public class ParserEncuesta implements ParserEncuestaConstants {
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[46];
+    boolean[] la1tokens = new boolean[48];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 3; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -271,7 +394,7 @@ public class ParserEncuesta implements ParserEncuestaConstants {
         }
       }
     }
-    for (int i = 0; i < 46; i++) {
+    for (int i = 0; i < 48; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

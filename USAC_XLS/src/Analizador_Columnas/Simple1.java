@@ -2,20 +2,22 @@
 package Analizador_Columnas;
 
 public class Simple1 implements Simple1Constants {
-
-    public void  initParser() throws ParseException, TokenMgrError
+    private static int CONT=-1;
+    public String  initParser() throws ParseException, TokenMgrError
     {
-        contenido_etiqueta();
+        CONT=-1;
+        return (contenido_etiqueta());
     }
 
 /*-=-=-=-=-=-=-         SINTACTICO          -=-=-=-=-=-=-=-=-=-=-=-=-=*/
-  static final public void contenido_etiqueta() throws ParseException {
+  final public String contenido_etiqueta() throws ParseException {
  String Cad;
     label_1:
     while (true) {
       Cad = CNT();
-                  System.out.println(Cad);
+                   {if (true) return Cad;}
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case ID:
       case Numeral:
       case Punto:
       case PuntoP:
@@ -29,9 +31,10 @@ public class Simple1 implements Simple1Constants {
       }
     }
     jj_consume_token(0);
+    throw new Error("Missing return statement in function");
   }
 
-  static final public String CNT() throws ParseException {
+  final public String CNT() throws ParseException {
  String Cad;
 String aux;
     Cad = VALOR();
@@ -40,10 +43,11 @@ String aux;
     throw new Error("Missing return statement in function");
   }
 
-  static final public String CNT_2() throws ParseException {
+  final public String CNT_2() throws ParseException {
  String Cad;
 String aux;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case ID:
     case Numeral:
     case Punto:
     case PuntoP:
@@ -65,31 +69,55 @@ String aux;
     throw new Error("Missing return statement in function");
   }
 
-  static final public String VALOR() throws ParseException {
+  final public String VALOR() throws ParseException {
  Token t;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case Cualquiera:
       t = jj_consume_token(Cualquiera);
-                                     {if (true) return "\u005c"" + t.image + "\u005c"" + " ";}
+                                        CONT++;
+                                        t.image = "\u005c"" + t.image + "\u005c"" + " ";
+                                        if(CONT>0){
+                                            t.image= "+" + t.image;
+                                        }
+                                        {if (true) return t.image;}
       break;
     case Numeral:
       jj_consume_token(Numeral);
       jj_consume_token(Acor);
       t = jj_consume_token(ID);
       jj_consume_token(Ccor);
-                                     {if (true) return "+" + t.image ;}
+                                        CONT++;
+                                        if(CONT>0){
+                                            t.image= "+" + t.image;
+                                        }
+                                        {if (true) return t.image ;}
       break;
     case Punto:
       jj_consume_token(Punto);
-                                     {if (true) return "padre ";}
+                                        CONT++;
+                                        {if (true) return "padre ";}
       break;
     case PuntoP:
       jj_consume_token(PuntoP);
-                                     {if (true) return "madre";}
+                                        CONT++;
+                                        {if (true) return "madre";}
       break;
     case string_literal:
       t = jj_consume_token(string_literal);
-                                     {if (true) return "+"+t.image;}
+                                        CONT++;
+                                        if(CONT>0){
+                                            t.image= "+" + t.image;
+                                        }
+                                        {if (true) return t.image;}
+      break;
+    case ID:
+      t = jj_consume_token(ID);
+                                        CONT++;
+                                        t.image = "\u005c"" + t.image + "\u005c"";
+                                        if(CONT>0){
+                                            t.image= "+" + t.image;
+                                        }
+                                        {if (true) return t.image;}
       break;
     default:
       jj_la1[2] = jj_gen;
@@ -99,23 +127,22 @@ String aux;
     throw new Error("Missing return statement in function");
   }
 
-  static private boolean jj_initialized_once = false;
   /** Generated Token Manager. */
-  static public Simple1TokenManager token_source;
-  static SimpleCharStream jj_input_stream;
+  public Simple1TokenManager token_source;
+  SimpleCharStream jj_input_stream;
   /** Current token. */
-  static public Token token;
+  public Token token;
   /** Next token. */
-  static public Token jj_nt;
-  static private int jj_ntk;
-  static private int jj_gen;
-  static final private int[] jj_la1 = new int[3];
+  public Token jj_nt;
+  private int jj_ntk;
+  private int jj_gen;
+  final private int[] jj_la1 = new int[3];
   static private int[] jj_la1_0;
   static {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x1e40,0x1e41,0x1e40,};
+      jj_la1_0 = new int[] {0x1e60,0x1e61,0x1e60,};
    }
 
   /** Constructor with InputStream. */
@@ -124,13 +151,6 @@ String aux;
   }
   /** Constructor with InputStream and supplied encoding */
   public Simple1(java.io.InputStream stream, String encoding) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser.  ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     try { jj_input_stream = new SimpleCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source = new Simple1TokenManager(jj_input_stream);
     token = new Token();
@@ -140,11 +160,11 @@ String aux;
   }
 
   /** Reinitialise. */
-  static public void ReInit(java.io.InputStream stream) {
+  public void ReInit(java.io.InputStream stream) {
      ReInit(stream, null);
   }
   /** Reinitialise. */
-  static public void ReInit(java.io.InputStream stream, String encoding) {
+  public void ReInit(java.io.InputStream stream, String encoding) {
     try { jj_input_stream.ReInit(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source.ReInit(jj_input_stream);
     token = new Token();
@@ -155,13 +175,6 @@ String aux;
 
   /** Constructor. */
   public Simple1(java.io.Reader stream) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser. ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     jj_input_stream = new SimpleCharStream(stream, 1, 1);
     token_source = new Simple1TokenManager(jj_input_stream);
     token = new Token();
@@ -171,7 +184,7 @@ String aux;
   }
 
   /** Reinitialise. */
-  static public void ReInit(java.io.Reader stream) {
+  public void ReInit(java.io.Reader stream) {
     jj_input_stream.ReInit(stream, 1, 1);
     token_source.ReInit(jj_input_stream);
     token = new Token();
@@ -182,13 +195,6 @@ String aux;
 
   /** Constructor with generated Token Manager. */
   public Simple1(Simple1TokenManager tm) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser. ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     token_source = tm;
     token = new Token();
     jj_ntk = -1;
@@ -205,7 +211,7 @@ String aux;
     for (int i = 0; i < 3; i++) jj_la1[i] = -1;
   }
 
-  static private Token jj_consume_token(int kind) throws ParseException {
+  private Token jj_consume_token(int kind) throws ParseException {
     Token oldToken;
     if ((oldToken = token).next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
@@ -221,7 +227,7 @@ String aux;
 
 
 /** Get the next Token. */
-  static final public Token getNextToken() {
+  final public Token getNextToken() {
     if (token.next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
     jj_ntk = -1;
@@ -230,7 +236,7 @@ String aux;
   }
 
 /** Get the specific Token. */
-  static final public Token getToken(int index) {
+  final public Token getToken(int index) {
     Token t = token;
     for (int i = 0; i < index; i++) {
       if (t.next != null) t = t.next;
@@ -239,19 +245,19 @@ String aux;
     return t;
   }
 
-  static private int jj_ntk() {
+  private int jj_ntk() {
     if ((jj_nt=token.next) == null)
       return (jj_ntk = (token.next=token_source.getNextToken()).kind);
     else
       return (jj_ntk = jj_nt.kind);
   }
 
-  static private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
-  static private int[] jj_expentry;
-  static private int jj_kind = -1;
+  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
+  private int[] jj_expentry;
+  private int jj_kind = -1;
 
   /** Generate ParseException. */
-  static public ParseException generateParseException() {
+  public ParseException generateParseException() {
     jj_expentries.clear();
     boolean[] la1tokens = new boolean[13];
     if (jj_kind >= 0) {
@@ -282,11 +288,11 @@ String aux;
   }
 
   /** Enable tracing. */
-  static final public void enable_tracing() {
+  final public void enable_tracing() {
   }
 
   /** Disable tracing. */
-  static final public void disable_tracing() {
+  final public void disable_tracing() {
   }
 
 }
