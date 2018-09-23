@@ -158,7 +158,7 @@
         ~texto~
         </tipo>
         <idpregunta>
-        ~nombre~
+        ~mayor~
         </idpregunta>
         <etiqueta>
         ~Nombre de la instalacion~

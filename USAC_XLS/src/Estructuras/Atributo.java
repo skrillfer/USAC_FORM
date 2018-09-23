@@ -43,7 +43,12 @@ public class Atributo {
 
     public String generarCodigoXForm_Forma1(Pregunta pregunta) {
         String code = "";
-    switch (this.nombre.toLowerCase()) {
+        try {
+            valor = valor.replaceAll("\'", "\"");
+        } catch (Exception e) {
+        }
+        
+        switch (this.nombre.toLowerCase()) {
             
             case "etiqueta":
                 this.valor = Parsear_Valor(this.valor,pregunta);

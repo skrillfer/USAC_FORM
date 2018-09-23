@@ -28,13 +28,29 @@ public class ParserMultimedia {
   private static Multimedia ml;
   public String  initParser() throws ParseException, TokenMgrError
     { 
-        ml = new Multimedia();
-        return (contenido_multimedia());
+        try
+        {
+            ml = new Multimedia();
+            return (contenido_multimedia());
+        }catch(Exception ex)
+        {
+            return "";
+        }
+        
     }
     
     public Multimedia getMultimedia()
     {
         return ml;
+    }
+
+    void error_skipto(int kind) {
+        ParseException e = generateParseException();  // generate the exception object.
+        System.out.println(e.toString());  // print the error message
+        Token t;
+        do {
+          t = getNextToken();
+        } while (t.kind != kind);
     }
 }
 
@@ -59,13 +75,14 @@ TOKEN :
 }
 
 
-String contenido_multimedia():
+String contenido_multimedia()throws  IOException:
 {String Cad;}
 {
+    
     (Cad = CNT() { return Cad; })+ <EOF> 
 }
 
-String CNT():
+String CNT()throws  IOException:
 {
     String tp_md=""; String otro="";
 }
@@ -74,7 +91,7 @@ String CNT():
     {return tp_md+"~"+otro;}
 }
 
-String CN2():
+String CN2()throws  IOException:
 {
 String auto=""; Token url;
 }
@@ -86,7 +103,7 @@ String auto=""; Token url;
     }
 }
 
-String TipoMedia():
+String TipoMedia()throws IOException:
 {String tipo="";}
 {
     (<M_IMG> {tipo="imagen";}|<M_VID>{tipo="video";}|<M_AUD>{tipo="audio";})
@@ -96,7 +113,7 @@ String TipoMedia():
     }
 }
 
-String Reproduccion():
+String Reproduccion()throws  IOException:
 {String auto="";}
 {
     (<REPRO> <IG_IG> (<TRUE>{auto="verdadero";}|<FALSE>{auto="falso";}) )

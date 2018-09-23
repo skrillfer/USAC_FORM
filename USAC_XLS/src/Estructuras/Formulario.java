@@ -14,6 +14,7 @@ import java.util.ArrayList;
  * @author fernando
  */
 public class Formulario {
+    public  ArrayList<ERROR> LT_ERRORES  =null;
     public ArrayList<Opcion> LT_Opciones=new ArrayList<>();
     private String titulo="";
     private String idFormulario="";
@@ -93,7 +94,7 @@ public class Formulario {
         return str;
     }
     
-    public String Parsear_Parametro(String val, int op)
+    public String Parsear_Parametro(String val, int op,Pregunta pregunta)
     {
         String parametro="";
         if(op==1)//Es de Texto
@@ -104,7 +105,10 @@ public class Formulario {
                 parametro+=parser.getMin();
                 parametro+=","+parser.getMax();
                 parametro+=","+parser.getFil();
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                String descripcion="Pregunta:"+get_ID_PREGUNTA(pregunta)+" tipo Texto, su parametro es incorrecto:"+val;
+                LT_ERRORES.add(new ERROR("0", "0","Semantico",descripcion));
+            }
         }else if(op==2)//Es de Rango
         {
             try {
@@ -129,7 +133,11 @@ public class Formulario {
                 parametro+=ini;
                 parametro+=","+fin;
                 
-            } catch (Exception e) {}
+            } catch (Exception e) 
+            {
+                String descripcion="Pregunta:"+get_ID_PREGUNTA(pregunta)+" tipo Rango, su parametro es incorrecto:"+val;
+                LT_ERRORES.add(new ERROR("0", "0","Semantico",descripcion));
+            }
         }
         
         return parametro;
@@ -140,6 +148,8 @@ public class Formulario {
     public String generar_codIn_FormGR_CIC(ArrayList<Pregunta> Lista_Preguntas)
     {
         String str="";
+        Atributo ATRIX;
+        String para_Str="";
         for (Pregunta pregunta : Lista_Preguntas) {
                     switch(pregunta.TIPO.toLowerCase())
                     {
@@ -153,7 +163,7 @@ public class Formulario {
                                 String parametro11="";
                                 if(atr11!=null)
                                 {
-                                    parametro11=Parsear_Parametro(atr11.valor.trim(),1);
+                                    parametro11=Parsear_Parametro(atr11.valor.trim(),1,pregunta);
                                 }
                                 str+=Cod_PregCon_AparienciayParametro(pregunta,"cadena","cadena",parametro11);
                             //Codigo Post-----
@@ -173,27 +183,68 @@ public class Formulario {
                                 pregunta.TIPO="cadena";
                             }
                             
+                            ATRIX = pregunta.getAtributo_X_Nombre("parametro");
+                            para_Str="";
+                            if(ATRIX!=null)
+                            {
+                                para_Str=Parsear_Parametro(ATRIX.valor.trim(),1,pregunta);
+                            }
+                            
                             if(!pregunta.Apariencia.equals("")){
-                                str+=Cod_PregCon_Apariencia(pregunta,pregunta.Apariencia);
+                                str+=Cod_PregCon_AparienciayParametro(pregunta,get_Tipo_Match(pregunta.TIPO),pregunta.Apariencia,para_Str);
                             }else
                             {
-                                str+=Cod_PregCon_Apariencia(pregunta,pregunta.TIPO);
+                                str+=Cod_PregCon_AparienciayParametro(pregunta,get_Tipo_Match(pregunta.TIPO),pregunta.TIPO,para_Str);
                             }
                             //Codigo Post-----
                             str+=gen_CodigoPost(pregunta);
                             //----------------
                             break;
                         case "nota":
-                            if(pregunta.multimedia!=null)
+                            //Codigo Pre------
+                            str+=gen_CodigoPre(pregunta);
+                            //----------------
+                           
+                            ATRIX = pregunta.getAtributo_X_Nombre("parametro");
+                            para_Str="";
+                            if(ATRIX!=null)
                             {
-                                str+=Cod_Preg_Nota_Mostrar(pregunta,pregunta.multimedia.tipoMedia);
-                            }else
-                            {
-                                str+=Cod_Preg_Nota(pregunta);
+                                para_Str=Parsear_Parametro(ATRIX.valor.trim(),1,pregunta);
                             }
+                           
+                            
+                            if(pregunta.TIPO.toLowerCase().equals("texto")){
+                                pregunta.TIPO="cadena";
+                            }
+                            
+                            if(!pregunta.Apariencia.equals("")){
+                                str+=Cod_PregCon_AparienciayParametro(pregunta,get_Tipo_Match(pregunta.TIPO),pregunta.Apariencia,para_Str);
+                            }
+                            else
+                            {
+                                if(pregunta.multimedia!=null)
+                                {
+                                    str+=Cod_Preg_Nota_Mostrar(pregunta,pregunta.multimedia.tipoMedia);
+                                }else
+                                {
+                                    str+=Cod_Preg_Nota(pregunta);
+                                }
+                            }
+                            
+                            //Codigo Post-----
+                            str+=gen_CodigoPost(pregunta);
+                            //----------------
                             break;
                         case "calcular":
+                            //Codigo Pre------
+                            str+=gen_CodigoPre(pregunta);
+                            //----------------
+                            
                             str+=Cod_Preg_X1(pregunta,pregunta.TIPO.toLowerCase());
+                            
+                            //Codigo Post-----
+                            str+=gen_CodigoPost(pregunta);
+                            //----------------
                             break;
                         case "fichero":
                             //Codigo Pre------
@@ -226,6 +277,10 @@ public class Formulario {
                                             case "si_no":
                                                 parametro="\"Si\",\"No\"";
                                                 break;
+                                            default:
+                                                String descripcion="Pregunta:"+get_ID_PREGUNTA(pregunta)+" tipo booleano, su parametro es incorrecto:"+lt[1].toLowerCase();
+                                                LT_ERRORES.add(new ERROR("0", "0","Semantico",descripcion));
+                                                break;
                                         }
                                     }
                                 }
@@ -242,7 +297,7 @@ public class Formulario {
                                 String parametro1="";
                                 if(atr1!=null)
                                 {
-                                    parametro1=Parsear_Parametro(atr1.valor.trim(),2);
+                                    parametro1=Parsear_Parametro(atr1.valor.trim(),2,pregunta);
                                 }
                                 
                                 str+=Cod_PregCon_AparienciayParametro(pregunta,"entero",pregunta.TIPO.toLowerCase(),parametro1);
@@ -403,17 +458,18 @@ public class Formulario {
         }
         return str;
     }
-    /*public String Cod_PregSin_Apariencia(Pregunta pregunta)
-    {   String str="";
+    
+    public String get_ID_PREGUNTA(Pregunta pregunta)
+    {
+        String str="";
         Atributo atr = pregunta.getAtributo_X_Nombre("idpregunta");
-        if(!pregunta.Aplicable.equals("")){
-            str+=getTabs(2)+"Si("+pregunta.Aplicable+"){\n";
-                str+=getTabs(3)+atr.valor+"().respuesta(res.es"+pregunta.TIPO.toLowerCase()+")."+pregunta.TIPO+"();\n";
-            str+=getTabs(2)+"}\n";
+        if(atr!=null)
+        {
+            str=atr.valor;
         }
-        str+=getTabs(2)+atr.valor+"().respuesta(res.es"+pregunta.TIPO.toLowerCase()+")."+pregunta.TIPO+"();\n";
         return str;
-    }*/
+    }
+    
     
     
     public String Cod_Preg_Fichero(Pregunta pregunta,String Apariencia,String parametro)
@@ -467,6 +523,7 @@ public class Formulario {
         switch(n_m.toLowerCase())
         {
             case "texto":
+            case "cadena":    
                 return "cadena";
             case "entero":
             case "decimal":
@@ -478,6 +535,12 @@ public class Formulario {
                 return "booleano";
             case "calcular":    
                 return "decimal";
+            case "rango":
+                return "entero";
+            case "selecciona_uno":
+                return "cadena";
+            case "fichero":
+                return "cadena";    
         }
         return "";
     }

@@ -173,7 +173,7 @@ public class Generador_XForm {
                 break;
             case "multimedia":
                 try {
-                    ParsearMultimedia(valor);
+                    ParsearMultimedia(valor,Pregunta_Actual);
                 } catch (Exception e) {
                     System.out.println("Error al parsear multimedia:" + valor);
                 }
@@ -251,9 +251,23 @@ public class Generador_XForm {
 
             if (Pregunta_Actual.atributos.size() > 0) {
                 if (Grupo_Actual != null) {
-                    Grupo_Actual.lista_preguntas.add(Pregunta_Actual);
+                    if(!si_pregunta_Existe(Pregunta_Actual, Grupo_Actual.lista_preguntas))
+                    {
+                        Grupo_Actual.lista_preguntas.add(Pregunta_Actual);
+                    }else
+                    {
+                        Lista_Errores.add(new ERROR(String.valueOf(Linea_Actual), String.valueOf(Columna_Actual), "Semantico", "La pregunta ya existe"));
+                    }
+                    
                 } else {
-                    Lista_Preguntas.add(Pregunta_Actual);
+                    if(!si_pregunta_Existe(Pregunta_Actual, Lista_Preguntas))
+                    {
+                        Lista_Preguntas.add(Pregunta_Actual);
+                    }else
+                    {
+                        Lista_Errores.add(new ERROR(String.valueOf(Linea_Actual), String.valueOf(Columna_Actual), "Semantico", "La pregunta ya existe"));
+                    }
+                    
                 }
             } else {
                 Lista_Errores.add(new ERROR(String.valueOf(Linea_Actual), String.valueOf(Columna_Actual), "Semantico", "La pregunta no tiene atributos"));
@@ -262,6 +276,19 @@ public class Generador_XForm {
         } else {
             System.err.println("Pregunta Actual es Null");
         }
+    }
+    
+    public boolean si_pregunta_Existe(Pregunta nuevo,ArrayList<Pregunta> LP)
+    {
+        for (Pregunta preg : LP) {
+            String nuevo_id = get_ID_PREGUNTA(nuevo);
+            String Act_id = get_ID_PREGUNTA(preg);
+            if(nuevo_id.toLowerCase().equals(Act_id.toLowerCase()))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void set_linea_actual(int linea) {
@@ -308,6 +335,7 @@ public class Generador_XForm {
 
                     if (pregunta.es_grupo) {
                         Formulario form1 = new Formulario(nombre_archivoxls);
+                        form1.LT_ERRORES=this.Lista_Errores;
                         form1.LT_Opciones=this.LT_Opciones;
                         String D4T4 = form1.generar_codIn_FormGR_CIC(pregunta.lista_preguntas);
                         CODIGO_PREGUNTA += D4T4;
@@ -397,10 +425,9 @@ public class Generador_XForm {
             }
         }
         return CODIGO_PREGUNTA;
-        //System.out.println(CODIGO_PREGUNTA);
     }
 
-    public void ParsearMultimedia(String vv) {
+    public void ParsearMultimedia(String vv,Pregunta pregunta) {
         try {
             ParserMultimedia parser_multimedia = new ParserMultimedia(new StringReader(vv));
             parser_multimedia.ReInit(new StringReader(vv));
@@ -410,10 +437,22 @@ public class Generador_XForm {
                 Pregunta_Actual.multimedia = ml;
             }
         } catch (Exception e) {
+            String descripcion="Pregunta:"+get_ID_PREGUNTA(pregunta)+" tipo Texto, su parametro es incorrecto:"+vv;
+            Lista_Errores.add(new ERROR("0", "0","Semantico",descripcion));
             System.err.println("Parseando multimedia:" + e.getMessage() + "\nValor:" + vv);
         }
     }
 
+    public String get_ID_PREGUNTA(Pregunta pregunta)
+    {
+        String str="";
+        Atributo atr = pregunta.getAtributo_X_Nombre("idpregunta");
+        if(atr!=null)
+        {
+            str=atr.valor;
+        }
+        return str;
+    }
     public String getTabs(int num) {
         String str = "";
         for (int i = 0; i < num; i++) {

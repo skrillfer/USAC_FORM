@@ -8,12 +8,14 @@ package Interfaz_Principal;
 import ANALIZADOR_CONFIGURACION.ParserConfig;
 import ANALIZADOR_OPCIONES.gram_opciones;
 import Analizador_Encuestas.ParserEncuesta;
+import Estructuras.ERROR;
 import Estructuras.Formulario;
 import Estructuras.Opcion;
 import Estructuras.Struct_Form;
 import GeneracionXFORM.Generador_XForm;
 import LECTURA_XLS.Modulo_Lectura;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,6 +32,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 import javax.swing.JOptionPane;
 
 /**
@@ -37,6 +40,7 @@ import javax.swing.JOptionPane;
  * @author fernando
  */
 public class Panel_Principal extends JPanel implements ActionListener {
+    String HTML_="";
     String nombre_archivo_actual="";
     String ruta_archivo_actual = "";
 
@@ -121,9 +125,20 @@ public class Panel_Principal extends JPanel implements ActionListener {
                 Generar_Mi_Formato();
             }
         } else if (source == btn_ERRORES) {
-
+            MOSTRAR_ERRORES();
         }
 
+    }
+    
+    public void MOSTRAR_ERRORES()
+    {
+        File file = new File("error.html");
+        try {
+            Files.write(file.toPath(), HTML_.getBytes());
+            Desktop.getDesktop().browse(file.toURI());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+        }
     }
 
     public void Generar_Mi_Formato() {
@@ -187,7 +202,9 @@ public class Panel_Principal extends JPanel implements ActionListener {
 
                     }
                     generador.nombre_archivoxls=nombre_archivo_actual;
+                    
                     Formulario formulario = new Formulario(nombre_archivo_actual);
+                    formulario.LT_ERRORES = generador.Lista_Errores; 
                     if (LT_Opciones != null) {
                         formulario.LT_Opciones = LT_Opciones;
                     }
@@ -195,7 +212,28 @@ public class Panel_Principal extends JPanel implements ActionListener {
                     String STR = formulario.generar_codigoXForm(generador.generar_CODIGO_XFORM(generador.Lista_Preguntas), generador.Lista_Preguntas);
                     
                     area_CODIGO_XFORM.setText(STR);
-                    //System.out.println(STR);
+                    if(formulario.LT_ERRORES!=null)
+                    {
+                        HTML_="<table style=\"width:100%\">\n";
+                        HTML_+="<tr>\n" +
+                                "    <th>Linea</th>\n" +
+                                "    <th>columna</th>\n" +
+                                "    <th>Tipo Error</th>\n" +
+                                "    <th>Tipo Descripcion</th>\n" +
+                               "</tr>";
+                        for (ERROR error : formulario.LT_ERRORES) {
+                            HTML_+="<tr>\n" +
+                                    "    <td>"+error.linea+"</td>\n" +
+                                    "    <td>"+error.columna+"</td>\n" +
+                                    "    <td>"+error.tipo+"</td>\n" +
+                                    "    <td>"+error.descripcion+"</td>\n" +
+                                   "</tr>\n";
+                        }
+                        HTML_+="</table>\n";
+                        
+                        escribir(HTML_, "error.html");
+                       
+                    }
                 }    
             }
         }else
