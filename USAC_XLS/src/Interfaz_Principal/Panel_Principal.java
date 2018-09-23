@@ -123,6 +123,10 @@ public class Panel_Principal extends JPanel implements ActionListener {
             if(!nombre_archivo_actual.equals(""))
             {
                 Generar_Mi_Formato();
+            }else
+            {
+                JOptionPane.showMessageDialog(this, "Debes primero abrir un archivo .xlsx, despues intenta generar");
+
             }
         } else if (source == btn_ERRORES) {
             MOSTRAR_ERRORES();
@@ -137,7 +141,6 @@ public class Panel_Principal extends JPanel implements ActionListener {
             Files.write(file.toPath(), HTML_.getBytes());
             Desktop.getDesktop().browse(file.toURI());
         } catch (IOException e) {
-            // TODO Auto-generated catch block
         }
     }
 
