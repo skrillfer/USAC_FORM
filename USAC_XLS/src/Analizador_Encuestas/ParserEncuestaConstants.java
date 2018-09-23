@@ -71,9 +71,9 @@ public interface ParserEncuestaConstants {
   /** RegularExpression Id. */
   int CALCULO_CLOSE = 34;
   /** RegularExpression Id. */
-  int REPETICION_OPEN = 35;
+  int REPETIR_OPEN = 35;
   /** RegularExpression Id. */
-  int REPETICION_CLOSE = 36;
+  int REPETIR_CLOSE = 36;
   /** RegularExpression Id. */
   int MULTIMEDIA_OPEN = 37;
   /** RegularExpression Id. */
@@ -91,11 +91,19 @@ public interface ParserEncuestaConstants {
   /** RegularExpression Id. */
   int RUTA_CLOSE = 44;
   /** RegularExpression Id. */
-  int TIPO_OPEN = 45;
+  int AGRUPACION_OPEN = 45;
   /** RegularExpression Id. */
-  int TIPO_CLOSE = 46;
+  int AGRUPACION_CLOSE = 46;
   /** RegularExpression Id. */
-  int VALOR = 47;
+  int CICLO_OPEN = 47;
+  /** RegularExpression Id. */
+  int CICLO_CLOSE = 48;
+  /** RegularExpression Id. */
+  int TIPO_OPEN = 49;
+  /** RegularExpression Id. */
+  int TIPO_CLOSE = 50;
+  /** RegularExpression Id. */
+  int VALOR = 51;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -137,8 +145,8 @@ public interface ParserEncuestaConstants {
     "\"</lectura>\"",
     "\"<calculo>\"",
     "\"</calculo>\"",
-    "\"<repeticion>\"",
-    "\"</repeticion>\"",
+    "\"<repetir>\"",
+    "\"</repetir>\"",
     "\"<multimedia>\"",
     "\"</multimedia>\"",
     "\"<apariencia>\"",
@@ -147,6 +155,10 @@ public interface ParserEncuestaConstants {
     "\"</parametro>\"",
     "\"<ruta>\"",
     "\"</ruta>\"",
+    "\"<agrupacion>\"",
+    "\"</agrupacion>\"",
+    "\"<ciclo>\"",
+    "\"</ciclo>\"",
     "\"<tipo>\"",
     "\"</tipo>\"",
     "<VALOR>",

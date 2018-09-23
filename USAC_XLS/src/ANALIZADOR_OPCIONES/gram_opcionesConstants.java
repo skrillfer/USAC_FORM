@@ -11,19 +11,31 @@ public interface gram_opcionesConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int NOMBRE_LISTA = 1;
+  int OPCIONES_OPEN = 5;
   /** RegularExpression Id. */
-  int NOMBRE = 2;
+  int OPCIONES_CLOSE = 6;
   /** RegularExpression Id. */
-  int ETIQUETA = 3;
+  int OPCION_OPEN = 7;
   /** RegularExpression Id. */
-  int MULTIMEDIA = 4;
+  int OPCION_CLOSE = 8;
   /** RegularExpression Id. */
-  int LETRA = 5;
+  int NOMBRELISTA_OPEN = 9;
   /** RegularExpression Id. */
-  int DIGITO = 6;
+  int NOMBRELISTA_CLOSE = 10;
   /** RegularExpression Id. */
-  int IDENTIFICADOR = 7;
+  int NOMBRE_OPEN = 11;
+  /** RegularExpression Id. */
+  int NOMBRE_CLOSE = 12;
+  /** RegularExpression Id. */
+  int ETIQUETA_OPEN = 13;
+  /** RegularExpression Id. */
+  int ETIQUETA_CLOSE = 14;
+  /** RegularExpression Id. */
+  int MULTIMEDIA_OPEN = 15;
+  /** RegularExpression Id. */
+  int MULTIMEDIA_CLOSE = 16;
+  /** RegularExpression Id. */
+  int VALOR = 17;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -31,13 +43,23 @@ public interface gram_opcionesConstants {
   /** Literal token values. */
   String[] tokenImage = {
     "<EOF>",
-    "\"nombre_lista\"",
-    "\"nombre\"",
-    "\"etiqueta\"",
-    "\"multimedia\"",
-    "<LETRA>",
-    "<DIGITO>",
-    "<IDENTIFICADOR>",
+    "\" \"",
+    "\"\\r\\n\"",
+    "\"\\t\"",
+    "\"\\n\"",
+    "\"<opciones>\"",
+    "\"</opciones>\"",
+    "\"<opcion>\"",
+    "\"</opcion>\"",
+    "\"<nombre_lista>\"",
+    "\"</nombre_lista>\"",
+    "\"<nombre>\"",
+    "\"</nombre>\"",
+    "\"<etiqueta>\"",
+    "\"</etiqueta>\"",
+    "\"<multimedia>\"",
+    "\"</multimedia>\"",
+    "<VALOR>",
   };
 
 }

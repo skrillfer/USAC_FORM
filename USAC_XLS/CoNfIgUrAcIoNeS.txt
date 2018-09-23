@@ -1,0 +1,43 @@
+<configuraciones>
+    <fila>
+        <idform>
+            ~impor_arbol~
+        </idform>
+        <importar>
+            ~importar Arbol.xform~
+        </importar>
+    </fila>
+    <fila>
+        <idform>
+            ~impor_nodo~
+        </idform>
+        <importar>
+            ~importar Nodo.xform~
+        </importar>
+    </fila>
+    <fila>
+        <idform>
+            ~codigo~
+        </idform>
+        <codigo_principal>
+            ~abo1 = nuevo Arbol();abo2 = nuevo Arbol()~
+        </codigo_principal>
+        <codigo_global>
+            ~Arbol abo1;Arbol abo2;~
+        </codigo_global>
+    </fila>
+    <fila>
+        <titulo_formulario>
+            ~Arbol Binario~
+        </titulo_formulario>
+        <idform>
+            ~Abb~
+        </idform>
+        <estilo>
+            ~todo~
+        </estilo>
+        <titulo_formulario>
+            ~Arbol Binario~
+        </titulo_formulario>
+    </fila>
+</configuraciones>

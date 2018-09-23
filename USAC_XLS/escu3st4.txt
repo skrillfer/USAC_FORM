@@ -1,0 +1,169 @@
+<encuesta>
+    <agrupacion>
+        <idpregunta>
+        ~operaciones~
+        </idpregunta>
+        <aplicable>
+        ~#[cuantas]<12~
+        </aplicable>
+    <agrupacion>
+        <idpregunta>
+        ~Gnumeros~
+        </idpregunta>
+    <pregunta>
+        <tipo>
+        ~calcular~
+        </tipo>
+        <idpregunta>
+        ~numeros~
+        </idpregunta>
+        <calculo>
+        ~.*0.18~
+        </calculo>
+    </pregunta>
+    <agrupacion>
+        <idpregunta>
+        ~Glogicos~
+        </idpregunta>
+    <pregunta>
+        <tipo>
+        ~calcular~
+        </tipo>
+        <idpregunta>
+        ~logicos~
+        </idpregunta>
+        <calculo>
+        ~False && true~
+        </calculo>
+    </pregunta>
+    </agrupacion>
+    </agrupacion>
+    <pregunta>
+        <tipo>
+        ~Nota~
+        </tipo>
+        <idpregunta>
+        ~ver_resultado~
+        </idpregunta>
+        <etiqueta>
+        ~La operación numerica es: #[numeros] La operación logica es #[logicos]~
+        </etiqueta>
+    </pregunta>
+    <pregunta>
+        <tipo>
+        ~condicion~
+        </tipo>
+        <idpregunta>
+        ~mayor~
+        </idpregunta>
+        <etiqueta>
+        ~Eres mayor de edad?~
+        </etiqueta>
+        <parametro>
+        ~Opcion=V_F~
+        </parametro>
+    </pregunta>
+    <pregunta>
+        <tipo>
+        ~rango~
+        </tipo>
+        <idpregunta>
+        ~cuantos~
+        </idpregunta>
+        <etiqueta>
+        ~Cuantos hijos tienes?~
+        </etiqueta>
+        <parametro>
+        ~Iniciar=0 finalizar=10~
+        </parametro>
+    </pregunta>
+    <pregunta>
+        <tipo>
+        ~Fichero ".png,.jpg"~
+        </tipo>
+        <idpregunta>
+        ~mi_imagen~
+        </idpregunta>
+        <etiqueta>
+        ~Sube una imagen~
+        </etiqueta>
+    </pregunta>
+    <pregunta>
+        <tipo>
+        ~Fichero ".mp3"~
+        </tipo>
+        <idpregunta>
+        ~mi_audio~
+        </idpregunta>
+        <etiqueta>
+        ~Sube un audio~
+        </etiqueta>
+    </pregunta>
+    <pregunta>
+        <tipo>
+        ~Fichero~
+        </tipo>
+        <idpregunta>
+        ~mi_fichero~
+        </idpregunta>
+        <etiqueta>
+        ~Sube cualquier archivo~
+        </etiqueta>
+    </pregunta>
+    <pregunta>
+        <tipo>
+        ~selecciona_uno~
+        </tipo>
+        <idpregunta>
+        ~genero~
+        </idpregunta>
+        <etiqueta>
+        ~Elige uno de los generos~
+        </etiqueta>
+    </pregunta>
+    <pregunta>
+        <tipo>
+        ~texto~
+        </tipo>
+        <idpregunta>
+        ~capital~
+        </idpregunta>
+        <etiqueta>
+        ~Capital de Guatemala?~
+        </etiqueta>
+        <parametro>
+        ~cad_min =2 cad_max=20 cad_fila=10~
+        </parametro>
+    </pregunta>
+    <ciclo>
+        <idpregunta>
+        ~ciclo1~
+        </idpregunta>
+        <repetir>
+        ~90 -#[numeros]~
+        </repetir>
+    <pregunta>
+        <tipo>
+        ~entero~
+        </tipo>
+        <idpregunta>
+        ~precio~
+        </idpregunta>
+        <etiqueta>
+        ~Cual fue el precio de la comida?~
+        </etiqueta>
+    </pregunta>
+    <pregunta>
+        <tipo>
+        ~texto~
+        </tipo>
+        <idpregunta>
+        ~nombre~
+        </idpregunta>
+        <etiqueta>
+        ~Nombre de la instalacion~
+        </etiqueta>
+    </pregunta>
+    </ciclo>
+    </agrupacion>
+</encuesta>

@@ -13,60 +13,99 @@ import java.util.*;
 import GeneracionXFORM.*;
 
 public class gram_opciones
-{
-    static String code="";
-    static int index=1;
-    static Generador_XForm generadorXform = new  Generador_XForm();
+{   ArrayList<Opcion> LTopciones;
+    Opcion actual=null;
+
     
-    public String  initParser() throws ParseException, TokenMgrError
-    { 
-        return (inicio_PrincipalOpciones());
+    public void  initParser() throws ParseException, TokenMgrError
+    {   LTopciones= new ArrayList<Opcion>();
+        Inicio();
     }
 
-    public static void agregarCadena(String cadena){
-        code += cadena;
+    public ArrayList<Opcion> getLTOpciones()
+    {
+        return this.LTopciones;
     }
 
 }PARSER_END(gram_opciones)
 
-//***********************palabras reservadas para hoja de OPCIONES
-TOKEN:{
-    <NOMBRE_LISTA: "nombre_lista">
-    |<NOMBRE: "nombre">
-    |<ETIQUETA: "etiqueta">
-    |<MULTIMEDIA: "multimedia">
-   
-}
-
-TOKEN:{
-    <LETRA: ["a"-"z","A"-"Z"]>
-    |<DIGITO: ["0"-"9"]>
-    |<SIMBOLOS: ["?","!","}","[",">","<"]>
-}
-
-TOKEN:{
-    <IDENTIFICADOR: <LETRA>(<LETRA>|<DIGITO>)* >
-    <PALABRA:       <LETRA>(<LETRA>|<DIGITO>) >
-}
-
-/* 
-TOKEN:{
-    <LETRA: ["a"-"z","A"-"Z"]> :S1
-    |<DIGITO: ["0"-"9"]>
-    |<ESPACIO:" ">
-}
-
-
-<S1> MORE : {
-    <LETRA>|<DIGITO> {} : S1
-}
-
-<S1> TOKEN:{
-    <ESPACIO>: DEFAULT
-}
-*/
-
-String inicio_PrincipalOpciones():{Token tk1=null;}
+///LEXICO
+SKIP:
 {
-    tk1=<IDENTIFICADOR> { System.out.println(tk1.image); return "";}
+    " "|"\r\n"|"\t"|"\n"
+}
+
+TOKEN:{
+    <OPCIONES_OPEN: "<opciones>">
+    |<OPCIONES_CLOSE: "</opciones>">
+    |<OPCION_OPEN: "<opcion>">
+    |<OPCION_CLOSE: "</opcion>">
+    |<NOMBRELISTA_OPEN: "<nombre_lista>">
+    |<NOMBRELISTA_CLOSE: "</nombre_lista>">
+    |<NOMBRE_OPEN: "<nombre>">
+    |<NOMBRE_CLOSE: "</nombre>">
+    |<ETIQUETA_OPEN: "<etiqueta>">
+    |<ETIQUETA_CLOSE: "</etiqueta>">
+    |<MULTIMEDIA_OPEN: "<multimedia>">
+    |<MULTIMEDIA_CLOSE: "</multimedia>">
+    |<VALOR: "~" (~["~"])* "~">
+}
+
+
+
+void Inicio() :
+{}
+{
+    Opciones() <EOF>
+}
+
+void Opciones():
+{
+}
+{
+    <OPCIONES_OPEN> (Fila())* <OPCIONES_CLOSE>
+}
+
+void Fila():
+{
+    actual = new Opcion();
+}
+{
+    <OPCION_OPEN>(Columna() )*<OPCION_CLOSE> {LTopciones.add(actual);}
+}
+
+void Columna():
+{   
+}
+{
+    (
+        NombreLista()
+        |Nombre()
+        |Etiqueta()
+        |Multimedia()
+    )
+}
+
+void NombreLista():
+{Token t;}
+{
+    <NOMBRELISTA_OPEN> t=<VALOR> <NOMBRELISTA_CLOSE>    {actual.setNombreLista(t.image);}
+}
+
+void Nombre():
+{Token t;}
+{
+    <NOMBRE_OPEN> t=<VALOR> <NOMBRE_CLOSE>              {actual.setNombre(t.image);}
+}
+
+void Etiqueta():
+{Token t;}
+{
+    <ETIQUETA_OPEN> t=<VALOR> <ETIQUETA_CLOSE>          {actual.setEtiqueta(t.image);}
+}
+
+void Multimedia():
+{Token t;}
+{
+    <MULTIMEDIA_OPEN> t=<VALOR> <MULTIMEDIA_CLOSE>      {actual.setMultimedia(t.image);}
 }

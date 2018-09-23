@@ -1,0 +1,233 @@
+
+
+options {
+  LOOKAHEAD = 1;
+  CHOICE_AMBIGUITY_CHECK = 2;
+  OTHER_AMBIGUITY_CHECK = 1;
+  STATIC = false;
+  DEBUG_PARSER = false;
+  DEBUG_LOOKAHEAD = false;
+  DEBUG_TOKEN_MANAGER = false;
+  ERROR_REPORTING = true;
+  JAVA_UNICODE_ESCAPE = false;
+  UNICODE_INPUT = false;
+  IGNORE_CASE = true;
+  USER_TOKEN_MANAGER = false;
+  USER_CHAR_STREAM = false;
+  BUILD_PARSER = true;
+  BUILD_TOKEN_MANAGER = true;
+  SANITY_CHECK = true;
+  FORCE_LA_CHECK = false;
+}
+
+PARSER_BEGIN(ParserConfig)
+
+package ANALIZADOR_CONFIGURACION;
+import Estructuras.*;
+import java.util.ArrayList;
+
+public class ParserConfig {
+    private static ArrayList<Struct_Form> LT_Structs = null;
+    private static String Ftitulo="";
+    private static String Fid="";
+    private static String Festilo="";
+    private static String Fimport="";
+    private static String FcodM="";
+    private static String FcodG="";
+
+    public void  initParser() throws ParseException, TokenMgrError
+    { 
+        Ftitulo="";
+        Fid="";
+        Festilo="";
+        Fimport="";
+        FcodM="";
+        FcodG="";
+        LT_Structs = new ArrayList<Struct_Form>();
+        Inicio();
+    }
+
+    public ArrayList<Struct_Form> getLT()
+    {
+        return this.LT_Structs;
+    }
+}
+
+PARSER_END(ParserConfig)
+
+///LEXICO
+SKIP:
+{
+    " "|"\r\n"|"\t"|"\n"
+}
+
+TOKEN :
+{
+<CONFIGURACIONES_OPEN: "<configuraciones>">
+|<CONFIGURACIONES_CLOSE: "</configuraciones>">
+
+|<FILA_OPEN: "<fila>">
+|<FILA_CLOSE: "</fila>">
+
+|<TITULO_OPEN: "<titulo_formulario>">
+|<TITULO_CLOSE: "</titulo_formulario>">
+|<IDFORM_OPEN: "<idform>">
+|<IDFORM_CLOSE: "</idform>">
+|<ESTILO_OPEN: "<estilo>">
+|<ESTILO_CLOSE: "</estilo>">
+|<IMPORTAR_OPEN: "<importar>">
+|<IMPORTAR_CLOSE: "</importar>">
+|<CODMAIN_OPEN: "<codigo_principal>">
+|<CODMAIN_CLOSE: "</codigo_principal>">
+|<CODGLOB_OPEN: "<codigo_global>">
+|<CODGLOB_CLOSE: "</codigo_global>">
+|<VALOR: "~" (~["~"])* "~">
+}
+
+void Inicio() :
+{}
+{
+  Formulario() <EOF>
+}
+
+void Formulario() :
+{}
+{
+    <CONFIGURACIONES_OPEN>(Fila())*<CONFIGURACIONES_CLOSE> 
+    {
+        
+    }
+}
+
+
+void Fila():
+{}
+{
+    (<FILA_OPEN>  (Columnas())* <FILA_CLOSE>)
+    {
+        LT_Structs.add(new Struct_Form(Ftitulo,Fid,Festilo,Fimport,FcodM,FcodG));
+       
+        Ftitulo="";
+        Fid="";
+        Festilo="";
+        Fimport="";
+        FcodM="";
+        FcodG="";
+    }
+    
+}
+
+void Columnas():
+{}
+{
+    (
+        Titulo()
+       |IdForm()
+       |Estilo()
+       |Importar()
+       |CodigoPrincipal()
+       |CodigoGlobal()
+    )
+}
+
+void Titulo():
+{
+    Token t;
+}
+{
+    <TITULO_OPEN> t=<VALOR> <TITULO_CLOSE> 
+    {
+        try {
+            t.image = t.image.substring(1, t.image.length()-1);
+        } catch (Exception e) {}
+        if(!t.image.equals("") && !t.image.equals("\"\""))
+        {
+            Ftitulo = t.image;
+        }
+    }
+}
+
+void IdForm():
+{
+    Token t;
+}
+{
+    <IDFORM_OPEN> t=<VALOR> <IDFORM_CLOSE>
+    {
+        try {
+            t.image = t.image.substring(1, t.image.length()-1);
+        } catch (Exception e) {}
+        if(!t.image.equals("") && !t.image.equals("\"\""))
+        {
+            Fid = t.image;
+        }
+    }
+}
+
+void Estilo():
+{
+    Token t;
+}
+{
+    <ESTILO_OPEN> t=<VALOR> <ESTILO_CLOSE>
+    {
+        try {
+            t.image = t.image.substring(1, t.image.length()-1);
+        } catch (Exception e) {}
+        if(!t.image.equals("") && !t.image.equals("\"\""))
+        {
+            Festilo = t.image;
+        }
+    }
+}
+
+void Importar():
+{
+    Token t;
+}
+{
+    <IMPORTAR_OPEN> t=<VALOR> <IMPORTAR_CLOSE>
+    {
+        try {
+            t.image = t.image.substring(1, t.image.length()-1);
+        } catch (Exception e) {}
+        if(!t.image.equals("") && !t.image.equals("\"\""))
+        {
+            Fimport = t.image;
+        }
+    }
+}
+
+void CodigoPrincipal():
+{
+    Token t;
+}
+{
+    <CODMAIN_OPEN> t=<VALOR> <CODMAIN_CLOSE>
+    {
+        try {
+            t.image = t.image.substring(1, t.image.length()-1);
+        } catch (Exception e) {}
+        if(!t.image.equals("") && !t.image.equals("\"\""))
+        {
+            FcodM = t.image;
+        }
+    }
+}
+
+void CodigoGlobal():
+{
+    Token t;
+}
+{
+    <CODGLOB_OPEN> t=<VALOR> <CODGLOB_CLOSE>
+    {
+        try {
+            t.image = t.image.substring(1, t.image.length()-1);
+        } catch (Exception e) {}
+        if(!t.image.equals("") && !t.image.equals("\"\""))
+        {
+            FcodG = t.image;
+        }
+    }
+}

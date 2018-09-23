@@ -1,0 +1,108 @@
+
+
+options {
+  LOOKAHEAD = 2;
+  CHOICE_AMBIGUITY_CHECK = 2;
+  OTHER_AMBIGUITY_CHECK = 1;
+  STATIC = false;
+  DEBUG_PARSER = false;
+  DEBUG_LOOKAHEAD = false;
+  DEBUG_TOKEN_MANAGER = false;
+  ERROR_REPORTING = true;
+  JAVA_UNICODE_ESCAPE = false;
+  UNICODE_INPUT = false;
+  IGNORE_CASE = true;
+  USER_TOKEN_MANAGER = false;
+  USER_CHAR_STREAM = false;
+  BUILD_PARSER = true;
+  BUILD_TOKEN_MANAGER = true;
+  SANITY_CHECK = true;
+  FORCE_LA_CHECK = true;
+}
+
+PARSER_BEGIN(ParserMultimedia)
+package Analizador_ColumnaMultimedia;
+import Estructuras.*;
+
+public class ParserMultimedia {
+  private static Multimedia ml;
+  public String  initParser() throws ParseException, TokenMgrError
+    { 
+        ml = new Multimedia();
+        return (contenido_multimedia());
+    }
+    
+    public Multimedia getMultimedia()
+    {
+        return ml;
+    }
+}
+
+PARSER_END(ParserMultimedia)
+
+
+SKIP:
+{
+    " "|"\r\n"|"\t"|"\n"
+}
+
+TOKEN :
+{
+<TRUE : "verdadero"|"true">
+|<IG_IG : "=">
+|<FALSE : "falso"|"false">
+|<M_IMG : "media_imagen" >
+|<M_VID : "media_video" >
+|<M_AUD : "media_audio" >
+|<REPRO : "reproduccion" >
+|<string_literal: "\"" (~["\""])* "\"">
+}
+
+
+String contenido_multimedia():
+{String Cad;}
+{
+    (Cad = CNT() { return Cad; })+ <EOF> 
+}
+
+String CNT():
+{
+    String tp_md=""; String otro="";
+}
+{
+    (tp_md=TipoMedia() otro=CN2())  
+    {return tp_md+"~"+otro;}
+}
+
+String CN2():
+{
+String auto=""; Token url;
+}
+{
+    (auto=Reproduccion() url=<string_literal>|url=<string_literal> (auto=Reproduccion())?)
+    {
+        ml.url = url.image;
+        return auto+"~"+url.image;
+    }
+}
+
+String TipoMedia():
+{String tipo="";}
+{
+    (<M_IMG> {tipo="imagen";}|<M_VID>{tipo="video";}|<M_AUD>{tipo="audio";})
+    {
+        ml.tipoMedia = tipo;
+        return tipo;
+    }
+}
+
+String Reproduccion():
+{String auto="";}
+{
+    (<REPRO> <IG_IG> (<TRUE>{auto="verdadero";}|<FALSE>{auto="falso";}) )
+    {
+        ml.repro_automatica=auto;
+        return auto;
+
+    }
+}

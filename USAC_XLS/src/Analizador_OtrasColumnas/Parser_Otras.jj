@@ -1,7 +1,7 @@
 
 
 options {
-  LOOKAHEAD = 1;
+  LOOKAHEAD = 2;
   CHOICE_AMBIGUITY_CHECK = 2;
   OTHER_AMBIGUITY_CHECK = 1;
   STATIC = false;
@@ -11,32 +11,30 @@ options {
   ERROR_REPORTING = true;
   JAVA_UNICODE_ESCAPE = false;
   UNICODE_INPUT = false;
-  IGNORE_CASE = true;
+  IGNORE_CASE = false;
   USER_TOKEN_MANAGER = false;
   USER_CHAR_STREAM = false;
   BUILD_PARSER = true;
   BUILD_TOKEN_MANAGER = true;
   SANITY_CHECK = true;
-  FORCE_LA_CHECK = false;
+  FORCE_LA_CHECK = true;
 }
 
-PARSER_BEGIN(Simple1)
-package Analizador_Columnas;
-import java.util.ArrayList;
+PARSER_BEGIN(ParserOtras)
+package Analizador_OtrasColumnas;
 
-public class Simple1 {
-    private static int CONT=-1;
+
+public class ParserOtras {
+
     public String  initParser() throws ParseException, TokenMgrError
     { 
-        CONT=-1;
         return (contenido_etiqueta());
     }
 
-  
-
 }
 
-PARSER_END(Simple1)
+PARSER_END(ParserOtras)
+
 /*-=-=-=-=-=-=-=-=-=     LEXICO       -=-=-=-=-=-=-=-=-=-=-=*/
 
 SKIP:
@@ -47,7 +45,6 @@ SKIP:
 TOKEN :
 {
 <ID: (["a"-"z","A"-"Z"]("_")?)(["a"-"z","A"-"Z"]|["0"- "9"]|"_")*>
-|<NUMERO: (["0"-"9"])+(["."]["0"-"9"])?>
 |<Numeral : "#">
 |<Acor : "[" >
 |<Ccor : "]" >
@@ -58,10 +55,9 @@ TOKEN :
 }
 
 SKIP:
-{
+{ 
     " "
 }
-
 /*-=-=-=-=-=-=-         SINTACTICO          -=-=-=-=-=-=-=-=-=-=-=-=-=*/
 
 
@@ -83,55 +79,61 @@ Cad = VALOR() aux = CNT_2() {Cad = Cad + aux;  return Cad;}
 
 
 String CNT_2() :
-{String Cad;
-String aux;}
 {
- Cad = VALOR() aux = CNT_2() {Cad = Cad + aux;  return Cad;}
+String Cad="";
+String aux="";
+String last="";
+}
+{
+     (aux = VALOR()
+     {
+        try {
+            String char_aux = aux.substring(0,1);
+            if(last.equals(".") && char_aux.matches("^\\w"))
+            {
+                Cad= Cad.substring(0, Cad.length()-1);
+                Cad+="pvnt0";
+            }
+            Cad += aux;
+            last = aux;
+        } catch (Exception e) {
+        }
+
+     })+  
+ {   
+    return Cad;
+ }
 | <EOF> {return "";}
 }
 
 
-String VALOR() :
+
+
+
+String VALOR():
 {Token t;}
 {
 t = <Cualquiera>                    {
-                                        CONT++;
-                                        t.image = "\"" + t.image + "\"" + " ";
-                                        if(CONT>0){
-                                            t.image= "+" + t.image;
-                                        }    
+                                        
                                         return t.image;
                                     }
 |<Numeral> <Acor>  t=<ID>  <Ccor>   {
-                                        CONT++;
-                                        if(CONT>0){
-                                            t.image= "+" + t.image;
-                                        }        
-                                        return t.image + "().respuesta" ;
+                                                
+                                        return t.image +"()pvnt0respuesta";
                                     }
 | <Punto>                           {
-                                        CONT++;
+                                        
                                         return ".";
                                     }
 | <PuntoP>                          {
-                                        CONT++;
+                                        
                                         return "posicion()";
                                     }
 | t=<string_literal>                {
-                                        CONT++;
-                                        if(CONT>0){
-                                            t.image= "+" + t.image;
-                                        } 
                                         return t.image;
                                     }
 |t=<ID>                             {
-                                        CONT++;
-                                        t.image = "\"" + t.image + "\"";
-                                        if(CONT>0){
-                                            t.image= "+" + t.image;
-                                        } 
                                         return t.image;
                                     }
 
 }
-

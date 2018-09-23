@@ -10,7 +10,7 @@ options {
   ERROR_REPORTING = true;
   JAVA_UNICODE_ESCAPE = false;
   UNICODE_INPUT = false;
-  IGNORE_CASE = false;
+  IGNORE_CASE = true;
   USER_TOKEN_MANAGER = false;
   USER_CHAR_STREAM = false;
   BUILD_PARSER = true;
@@ -32,7 +32,10 @@ public class ParserEncuesta {
     { 
         Inicio();
     }
-
+    public Generador_XForm get_Generador()
+    {
+        return this.generador;
+    }
 
 }
 
@@ -78,16 +81,20 @@ TOKEN :
 |<LECTURA_CLOSE: "</lectura>">
 |<CALCULO_OPEN: "<calculo>">      
 |<CALCULO_CLOSE: "</calculo>">
-|<REPETICION_OPEN: "<repeticion>">
-|<REPETICION_CLOSE: "</repeticion>">
+|<REPETIR_OPEN: "<repetir>">
+|<REPETIR_CLOSE: "</repetir>">
 |<MULTIMEDIA_OPEN: "<multimedia>">
 |<MULTIMEDIA_CLOSE: "</multimedia>">
 |<APARIENCIA_OPEN: "<apariencia>">
-|<APARIENCIA_CLOSE: "</apariencia>">
+|<APARIENCIA_CLOSE: "</apariencia>"> 
 |<PARAMETRO_OPEN: "<parametro>">
 |<PARAMETRO_CLOSE: "</parametro>">
 |<RUTA_OPEN: "<ruta>">
 |<RUTA_CLOSE: "</ruta>">
+|<AGRUPACION_OPEN: "<agrupacion>">
+|<AGRUPACION_CLOSE: "</agrupacion>">
+|<CICLO_OPEN: "<ciclo>">
+|<CICLO_CLOSE: "</ciclo>">
 
 
 |<TIPO_OPEN: "<tipo>">
@@ -110,18 +117,19 @@ void Encuesta() :
     <ENCUESTA_OPEN>(Fila())*<ENCUESTA_CLOSE> 
     {
         //Se genera el codigo XFORM
-        generador.generar_CODIGO_XFORM();
+        //generador.generar_CODIGO_XFORM();
     }
 }
 
 void Fila():
-{}
+{Pregunta n_pre;}
 {
-    (<PREGUNTA_OPEN> {Pregunta n_pre = generador.generar_Pregunta();} 
-    Pregunta() <PREGUNTA_CLOSE> )//o agrupacion o preguntas
+    ( (<PREGUNTA_OPEN>   {n_pre = generador.generar_Pregunta(false,false);} Pregunta() <PREGUNTA_CLOSE>)
+    | (<AGRUPACION_OPEN> {n_pre = generador.generar_Pregunta(false,true); } Pregunta() (Fila())*  <AGRUPACION_CLOSE> {generador.reset_GrupoActual();})
+    | (<CICLO_OPEN> {n_pre = generador.generar_Pregunta(true,false); } Pregunta() (Fila())*  <CICLO_CLOSE> {generador.reset_GrupoActual();})
+    )//o agrupacion o preguntas
     {
-        //Se crea la pregunta
-        
+        //Se agrega la pregunta
         generador.agregar_Pregunta();
     }
 }
@@ -142,11 +150,17 @@ void Columna():
        |t=RequeridoMsn()
        |t=Ruta()
        |t=Requerido()
+       |t=Repetir()
        |t=Restringir()
        |t=Predeterminado()
        |t=Codigo_Pre()
        |t=Codigo_Post()
        |t=Lectura()
+       |t=Multimedia()
+       |t=Calculo()
+       |t=Aplicable()
+       |t=Parametro()
+       
     )
     {
         try {
@@ -157,9 +171,7 @@ void Columna():
         //Para agregar el atributo se setea la columna
         generador.set_linea_actual(t.beginColumn);
         //Se Agregar el Atributo a la pregunta
-        generador.agregarAtributo(nm,t.image);
-
-        
+        generador.agregarAtributo(nm,t.image);   
     }
 }
 
@@ -222,20 +234,45 @@ Token Codigo_Pre():
 Token Codigo_Post():
 {Token t;}
 {
-    <CODIGOPOST_OPEN> t=<VALOR> <CODIGOPOST_CLOSE> { nm="codigo_pre"; return t;}
+    <CODIGOPOST_OPEN> t=<VALOR> <CODIGOPOST_CLOSE> { nm="codigo_post"; return t;}
 }
 
-void Calculo():
+Token Multimedia():
+{Token t;}  
+{
+    <MULTIMEDIA_OPEN> t=<VALOR> <MULTIMEDIA_CLOSE> { nm="multimedia"; return t;}
+}
+
+Token Calculo():
 {Token t;}
 {
-    <CALCULO_OPEN> t=<VALOR> <CALCULO_CLOSE> {System.out.println(t.image); }
+    <CALCULO_OPEN> t=<VALOR> <CALCULO_CLOSE>        { nm="calculo"; return t;}
 }
 
+
+Token Aplicable():
+{Token t;}
+{
+    <APLICABLE_OPEN> t=<VALOR> <APLICABLE_CLOSE>        { nm="aplicable"; return t;}
+}
+
+Token Parametro():
+{Token t;}
+{
+    <PARAMETRO_OPEN> t=<VALOR> <PARAMETRO_CLOSE>        { nm="parametro"; return t;}
+}
 
 Token Etiqueta():
 {Token t;}
 {
     <ETIQUETA_OPEN> t=<VALOR> <ETIQUETA_CLOSE> {nm="etiqueta"; return t; }
 }
+
+Token Repetir():
+{Token t;}
+{
+    <REPETIR_OPEN> t=<VALOR> <REPETIR_CLOSE> {nm="repetir"; return t; }
+}
+
 
 

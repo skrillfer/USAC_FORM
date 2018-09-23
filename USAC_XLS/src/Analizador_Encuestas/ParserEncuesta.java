@@ -11,6 +11,10 @@ public class ParserEncuesta implements ParserEncuestaConstants {
     {
         Inicio();
     }
+    public Generador_XForm get_Generador()
+    {
+        return this.generador;
+    }
 
   static final public void Inicio() throws ParseException {
     Encuesta();
@@ -23,6 +27,8 @@ public class ParserEncuesta implements ParserEncuestaConstants {
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case PREGUNTA_OPEN:
+      case AGRUPACION_OPEN:
+      case CICLO_OPEN:
         ;
         break;
       default:
@@ -32,22 +38,71 @@ public class ParserEncuesta implements ParserEncuestaConstants {
       Fila();
     }
     jj_consume_token(ENCUESTA_CLOSE);
-        //Se genera el codigo XFORM
-        generador.generar_CODIGO_XFORM();
+
   }
 
   static final public void Fila() throws ParseException {
-    jj_consume_token(PREGUNTA_OPEN);
-                      Pregunta n_pre = generador.generar_Pregunta();
-    Pregunta();
-    jj_consume_token(PREGUNTA_CLOSE);
-        //Se crea la pregunta
-
+ Pregunta n_pre;
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case PREGUNTA_OPEN:
+      jj_consume_token(PREGUNTA_OPEN);
+                          n_pre = generador.generar_Pregunta(false,false);
+      Pregunta();
+      jj_consume_token(PREGUNTA_CLOSE);
+      break;
+    case AGRUPACION_OPEN:
+      jj_consume_token(AGRUPACION_OPEN);
+                          n_pre = generador.generar_Pregunta(false,true);
+      Pregunta();
+      label_2:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case PREGUNTA_OPEN:
+        case AGRUPACION_OPEN:
+        case CICLO_OPEN:
+          ;
+          break;
+        default:
+          jj_la1[1] = jj_gen;
+          break label_2;
+        }
+        Fila();
+      }
+      jj_consume_token(AGRUPACION_CLOSE);
+                                                                                                                      generador.reset_GrupoActual();
+      break;
+    case CICLO_OPEN:
+      jj_consume_token(CICLO_OPEN);
+                     n_pre = generador.generar_Pregunta(true,false);
+      Pregunta();
+      label_3:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case PREGUNTA_OPEN:
+        case AGRUPACION_OPEN:
+        case CICLO_OPEN:
+          ;
+          break;
+        default:
+          jj_la1[2] = jj_gen;
+          break label_3;
+        }
+        Fila();
+      }
+      jj_consume_token(CICLO_CLOSE);
+                                                                                                            generador.reset_GrupoActual();
+      break;
+    default:
+      jj_la1[3] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+        //Se agrega la pregunta
         generador.agregar_Pregunta();
   }
 
   static final public void Pregunta() throws ParseException {
-    label_2:
+    label_4:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case IDPREGUNTA_OPEN:
@@ -58,13 +113,19 @@ public class ParserEncuesta implements ParserEncuestaConstants {
       case REQUERIDO_OPEN:
       case REQUERIDOMSN_OPEN:
       case PREDETERMINADO_OPEN:
+      case APLICABLE_OPEN:
+      case LECTURA_OPEN:
+      case CALCULO_OPEN:
+      case REPETIR_OPEN:
+      case MULTIMEDIA_OPEN:
+      case PARAMETRO_OPEN:
       case RUTA_OPEN:
       case TIPO_OPEN:
         ;
         break;
       default:
-        jj_la1[1] = jj_gen;
-        break label_2;
+        jj_la1[4] = jj_gen;
+        break label_4;
       }
       Columna();
     }
@@ -91,6 +152,9 @@ public class ParserEncuesta implements ParserEncuestaConstants {
     case REQUERIDO_OPEN:
       t = Requerido();
       break;
+    case REPETIR_OPEN:
+      t = Repetir();
+      break;
     case RESTRINGIR_OPEN:
       t = Restringir();
       break;
@@ -103,8 +167,23 @@ public class ParserEncuesta implements ParserEncuestaConstants {
     case CODIGOPOST_OPEN:
       t = Codigo_Post();
       break;
+    case LECTURA_OPEN:
+      t = Lectura();
+      break;
+    case MULTIMEDIA_OPEN:
+      t = Multimedia();
+      break;
+    case CALCULO_OPEN:
+      t = Calculo();
+      break;
+    case APLICABLE_OPEN:
+      t = Aplicable();
+      break;
+    case PARAMETRO_OPEN:
+      t = Parametro();
+      break;
     default:
-      jj_la1[2] = jj_gen;
+      jj_la1[5] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -165,6 +244,15 @@ public class ParserEncuesta implements ParserEncuestaConstants {
     throw new Error("Missing return statement in function");
   }
 
+  static final public Token Lectura() throws ParseException {
+ Token t;
+    jj_consume_token(LECTURA_OPEN);
+    t = jj_consume_token(VALOR);
+    jj_consume_token(LECTURA_CLOSE);
+                                               nm="lectura"; {if (true) return t;}
+    throw new Error("Missing return statement in function");
+  }
+
   static final public Token Restringir() throws ParseException {
  Token t;
     jj_consume_token(RESTRINGIR_OPEN);
@@ -197,16 +285,44 @@ public class ParserEncuesta implements ParserEncuestaConstants {
     jj_consume_token(CODIGOPOST_OPEN);
     t = jj_consume_token(VALOR);
     jj_consume_token(CODIGOPOST_CLOSE);
-                                                     nm="codigo_pre"; {if (true) return t;}
+                                                     nm="codigo_post"; {if (true) return t;}
     throw new Error("Missing return statement in function");
   }
 
-  static final public void Calculo() throws ParseException {
+  static final public Token Multimedia() throws ParseException {
+ Token t;
+    jj_consume_token(MULTIMEDIA_OPEN);
+    t = jj_consume_token(VALOR);
+    jj_consume_token(MULTIMEDIA_CLOSE);
+                                                     nm="multimedia"; {if (true) return t;}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public Token Calculo() throws ParseException {
  Token t;
     jj_consume_token(CALCULO_OPEN);
     t = jj_consume_token(VALOR);
     jj_consume_token(CALCULO_CLOSE);
-                                              System.out.println(t.image);
+                                                      nm="calculo"; {if (true) return t;}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public Token Aplicable() throws ParseException {
+ Token t;
+    jj_consume_token(APLICABLE_OPEN);
+    t = jj_consume_token(VALOR);
+    jj_consume_token(APLICABLE_CLOSE);
+                                                          nm="aplicable"; {if (true) return t;}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public Token Parametro() throws ParseException {
+ Token t;
+    jj_consume_token(PARAMETRO_OPEN);
+    t = jj_consume_token(VALOR);
+    jj_consume_token(PARAMETRO_CLOSE);
+                                                          nm="parametro"; {if (true) return t;}
+    throw new Error("Missing return statement in function");
   }
 
   static final public Token Etiqueta() throws ParseException {
@@ -215,6 +331,15 @@ public class ParserEncuesta implements ParserEncuestaConstants {
     t = jj_consume_token(VALOR);
     jj_consume_token(ETIQUETA_CLOSE);
                                                 nm="etiqueta"; {if (true) return t;}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public Token Repetir() throws ParseException {
+ Token t;
+    jj_consume_token(REPETIR_OPEN);
+    t = jj_consume_token(VALOR);
+    jj_consume_token(REPETIR_CLOSE);
+                                              nm="repetir"; {if (true) return t;}
     throw new Error("Missing return statement in function");
   }
 
@@ -228,7 +353,7 @@ public class ParserEncuesta implements ParserEncuestaConstants {
   static public Token jj_nt;
   static private int jj_ntk;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[3];
+  static final private int[] jj_la1 = new int[6];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -236,10 +361,10 @@ public class ParserEncuesta implements ParserEncuestaConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x80,0xa8a8a00,0xa8a8a00,};
+      jj_la1_0 = new int[] {0x80,0x80,0x80,0x80,0xaa8a8a00,0xaa8a8a00,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x2800,0x2800,};
+      jj_la1_1 = new int[] {0xa000,0xa000,0xa000,0xa000,0x20a2a,0x20a2a,};
    }
 
   /** Constructor with InputStream. */
@@ -260,7 +385,7 @@ public class ParserEncuesta implements ParserEncuestaConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 6; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -274,7 +399,7 @@ public class ParserEncuesta implements ParserEncuestaConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 6; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -291,7 +416,7 @@ public class ParserEncuesta implements ParserEncuestaConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 6; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -301,7 +426,7 @@ public class ParserEncuesta implements ParserEncuestaConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 6; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -317,7 +442,7 @@ public class ParserEncuesta implements ParserEncuestaConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 6; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -326,7 +451,7 @@ public class ParserEncuesta implements ParserEncuestaConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 3; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 6; i++) jj_la1[i] = -1;
   }
 
   static private Token jj_consume_token(int kind) throws ParseException {
@@ -377,12 +502,12 @@ public class ParserEncuesta implements ParserEncuestaConstants {
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[48];
+    boolean[] la1tokens = new boolean[52];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 6; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -394,7 +519,7 @@ public class ParserEncuesta implements ParserEncuestaConstants {
         }
       }
     }
-    for (int i = 0; i < 48; i++) {
+    for (int i = 0; i < 52; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

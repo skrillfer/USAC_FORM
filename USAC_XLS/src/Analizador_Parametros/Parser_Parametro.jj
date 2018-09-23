@@ -1,0 +1,141 @@
+
+
+options {
+  LOOKAHEAD = 1;
+  CHOICE_AMBIGUITY_CHECK = 2;
+  OTHER_AMBIGUITY_CHECK = 1;
+  STATIC = false;
+  DEBUG_PARSER = false;
+  DEBUG_LOOKAHEAD = false;
+  DEBUG_TOKEN_MANAGER = false;
+  ERROR_REPORTING = true;
+  JAVA_UNICODE_ESCAPE = false;
+  UNICODE_INPUT = false;
+  IGNORE_CASE = true;
+  USER_TOKEN_MANAGER = false;
+  USER_CHAR_STREAM = false;
+  BUILD_PARSER = true;
+  BUILD_TOKEN_MANAGER = true;
+  SANITY_CHECK = true;
+  FORCE_LA_CHECK = false;
+}
+
+PARSER_BEGIN(ParserParam)
+package Analizador_Parametros;
+
+public class ParserParam {
+    private static String max = "";
+    private static String min = "";
+    private static String fil = "";
+
+    private static String ini = "";
+    private static String fin = "";
+
+  
+    public void  initParser() throws ParseException, TokenMgrError
+    {   max="nada";
+        min="nada";
+        fil="nada";
+        ini="";
+        fin="";
+        Inicio();
+    }
+
+    public String getMin()
+    {
+        return this.min;
+    }
+    public String getMax()
+    {
+        return this.max;
+    }
+    public String getFil()
+    {
+        return this.fil;
+    }
+
+    public String getIni()
+    {
+        return this.ini;
+    }
+
+    public String getFin()
+    {
+        return this.fin;
+    }
+}
+
+PARSER_END(ParserParam)
+
+SKIP:
+{
+    " "|"\r\n"|"\t"|"\n"
+}
+
+
+TOKEN :
+{
+<CADMIN: "cad_min">
+|<CADMAX: "cad_max">
+|<INICIAR: "iniciar">
+|<FINALIZAR: "finalizar">
+|<CADFILA: "cad_fila">
+|<IG_IG: "=">
+
+|<ENTERO: (["0"-"9"])+>
+}
+
+
+void Inicio() :
+{}
+{
+    (Minimo()
+    |Maximo()
+    |Fila()
+    |I_niciar() 
+    |F_inalizar())* 
+}
+
+void Minimo() :
+{
+    Token t;
+}
+{
+  <CADMIN> <IG_IG> t=<ENTERO>  {min=t.image;}
+}
+
+
+void Maximo() :
+{
+    Token t;
+}
+{
+  <CADMAX> <IG_IG> t=<ENTERO>   {max=t.image;}
+}
+
+
+void Fila() :
+{
+    Token t;
+}
+{
+  <CADFILA> <IG_IG> t=<ENTERO>  {fil=t.image;}
+}
+
+
+void I_niciar() :
+{
+    Token t;
+}
+{
+  <INICIAR> <IG_IG> t=<ENTERO>  {ini=t.image;}
+}
+
+
+void F_inalizar() :
+{
+    Token t;
+}
+{
+  <FINALIZAR> <IG_IG> t=<ENTERO>  {fin=t.image;}
+}
