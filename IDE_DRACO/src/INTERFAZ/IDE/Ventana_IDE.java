@@ -5,24 +5,18 @@
  */
 package INTERFAZ.IDE;
 
+import Interprete.Interpretacion;
+import LEXICOX.Lexicox;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.HeadlessException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.FileNotFoundException;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
-import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
-import javax.swing.text.StyledDocument;
 
 /**
  *
@@ -63,11 +57,10 @@ public class Ventana_IDE extends JFrame{
         setVisible(true);
     }
     
-    public static void main(String[] args) throws HeadlessException {
-        try {
-            new Ventana_IDE().show();
-        } catch (BadLocationException ex) {
-            Logger.getLogger(Ventana_IDE.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public static void main(String[] args) throws HeadlessException, FileNotFoundException {
+        //Lexicox hola = new Lexicox();
+        //hola.ejecutar();
+        Interpretacion interpretar = new Interpretacion();
+        interpretar.iniciar_interpretacion();
     }
 }

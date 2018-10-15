@@ -1,0 +1,130 @@
+package ANALIZADORES.LenguajeD_PP; 
+import java_cup.runtime.*;
+
+import java.util.*;
+import ESTRUCTURAS.*;
+
+action code {:
+    public int Index=1;
+    public Nodo root;  
+:}
+
+
+parser code {:
+    
+    public void syntax_error(Symbol s){
+        System.err.println("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador "
+        +s.value + " no reconocido." );
+        //Inicio.reporteError.agregar("Sintactico",s.right+1,s.left+1,"Identificador "+s.value+" no reconocido");
+    }
+    
+    public Nodo getRoot(){
+        return action_obj.root;
+    }
+:}
+
+
+terminal token STRING_LITERAL,NUM_LITERAL,DECIMAL_LITERAL,ID,MAS,MENOS,POR,DIV,POT,INC,DEC,
+APAR,CPAR,ACORCH,CCORCH,COMA,PYC,DSPTS,IGUAL,IG_IG,MENQ,MENIQ,MAYQ,MAYIQ,DIF,OR,AND,NOT,CADENA,
+CARACTER,ENTERO,DECIMAL,BOOLEANO,FALSO,VERDADERO;
+
+
+non terminal Nodo inicio,tipo_dato,lista_id,asignacion_var,expl,expr,expa,dato,
+                  cuerpo_documento,contenido_cuerpo,declaraciones,declaracion_variable;
+
+
+precedence left MAS, MENOS;
+precedence left POR, DIV;
+precedence left POT;
+precedence left APAR,CPAR;
+precedence left IG_IG,MENQ,MENIQ,MAYQ,MAYIQ,DIF;
+precedence left OR;
+precedence left AND;
+precedence left NOT;
+
+
+start with inicio;
+
+
+inicio ::= cuerpo_documento;
+
+//------------------------------------------------------------------------------
+cuerpo_documento ::={::} 
+                    |contenido_cuerpo;
+//------------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------------
+contenido_cuerpo ::= contenido_cuerpo declaraciones
+                    |declaraciones;
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+declaraciones   ::= declaracion_variable;
+//------------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------------
+declaracion_variable ::= tipo_dato lista_id asignacion_var PYC
+                        |ID        lista_id asignacion_var PYC;
+//------------------------------------------------------------------------------
+
+
+
+//------------------------------------------------------------------------------
+tipo_dato ::= ENTERO | DECIMAL | CARACTER | BOOLEANO | CADENA ;
+//------------------------------------------------------------------------------
+
+
+
+//------------------------------------------------------------------------------
+lista_id ::= lista_id ID
+            |ID;
+//------------------------------------------------------------------------------
+
+
+
+//------------------------------------------------------------------------------
+asignacion_var       ::= {::}
+                        |IGUAL expl; 
+//------------------------------------------------------------------------------
+
+
+//---------------------------EXPRESIONES LOGICAS--------------------------------
+expl ::= expl AND expl
+        |expl OR expl
+        |NOT expl
+        |expr;
+//------------------------------------------------------------------------------
+
+//---------------------------EXPRESIONES RELACIONALES---------------------------
+expr ::= expa IG_IG expa
+        |expa DIF   expa
+        |expa MENQ expa
+        |expa MENIQ expa
+        |expa MAYQ expa
+        |expa MAYIQ expa
+        |expa;
+//------------------------------------------------------------------------------
+
+
+//---------------------------EXPRESIONES ARITMETICAS----------------------------
+expa ::= expa MAS expa
+        |expa MENOS expa
+        |expa POR expa
+        |expa DIV expa
+        |expa POT expa
+        |MENOS expa
+        |APAR expl CPAR
+        |dato;
+//------------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------------
+dato ::= STRING_LITERAL
+        |NUM_LITERAL
+        |DECIMAL_LITERAL
+        |VERDADERO
+        |FALSO
+        |ID;
+//------------------------------------------------------------------------------

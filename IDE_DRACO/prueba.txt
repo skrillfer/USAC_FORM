@@ -1,0 +1,5 @@
+entero num1;
+decimal num2;
+caracter var1;
+cadena var2;
+
