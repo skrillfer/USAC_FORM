@@ -1,3 +1,6 @@
+
+metodo1();
+
 entero num1;
 decimal num2;
 caracter var1;
@@ -16,3 +19,40 @@ estructura carro
 {
     entero cad1=100;
 }
+
+
+
+
+
+entero metodo1()
+{
+}
+
+cadena metodo2()
+{
+}
+
+entero  [][]metodo3()
+{
+}
+
+
+
+
+
+booleano varx = arr1[2][3];
+
+booleano varx = metodo1();
+
+
+acceso1 = metodo1();
+
+
+lllo = obj1.atr1.obj1.metodo();
+
+
+lllo = obj1.atr1.obj1.metodo(1,2,3,4);
+
+
+
+

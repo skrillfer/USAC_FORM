@@ -73,6 +73,8 @@ Cadena = [\"] [^\"]* [\"]
 
 <YYINITIAL> "," {return new Symbol(sym.COMA, new token(yycolumn, yyline, yytext()));}
 <YYINITIAL> ";" {return new Symbol(sym.PYC, new token(yycolumn, yyline, yytext()));}
+<YYINITIAL> "." {return new Symbol(sym.PTO, new token(yycolumn, yyline, yytext()));}
+<YYINITIAL> "?" {return new Symbol(sym.SIGNO_Q, new token(yycolumn, yyline, yytext()));}
 <YYINITIAL> ":" {return new Symbol(sym.DSPTS, new token(yycolumn, yyline, yytext()));}
 <YYINITIAL> "=" {return new Symbol(sym.IGUAL, new token(yycolumn, yyline, yytext()));}
 
@@ -81,6 +83,23 @@ Cadena = [\"] [^\"]* [\"]
 /*Palabras Reservadas*/
 /*Del Lenguaje*/
 <YYINITIAL> "estructura" {return new Symbol(sym.ESTRUCT, new token(yycolumn, yyline, yytext()));}
+
+<YYINITIAL> "si" {return new Symbol(sym.SI, new token(yycolumn, yyline, yytext()));}
+<YYINITIAL> "sino" {return new Symbol(sym.SINO, new token(yycolumn, yyline, yytext()));}
+
+<YYINITIAL> "para" {return new Symbol(sym.SI, new token(yycolumn, yyline, yytext()));}
+
+<YYINITIAL> "mientras" {return new Symbol(sym.SI, new token(yycolumn, yyline, yytext()));}
+
+<YYINITIAL> "detener" {return new Symbol(sym.DETENER, new token(yycolumn, yyline, yytext()));}
+<YYINITIAL> "continuar" {return new Symbol(sym.CONTINUAR, new token(yycolumn, yyline, yytext()));}
+<YYINITIAL> "retornar" {return new Symbol(sym.RETORNAR, new token(yycolumn, yyline, yytext()));}
+
+<YYINITIAL> "imprimir" {return new Symbol(sym.IMPRIMIR, new token(yycolumn, yyline, yytext()));}
+
+<YYINITIAL> "vacio" {return new Symbol(sym.VACIO, new token(yycolumn, yyline, yytext()));}
+
+<YYINITIAL> "principal" {return new Symbol(sym.PRINCIPAL, new token(yycolumn, yyline, yytext()));}
 
 
 /*TIPOS DE DATOS*/
