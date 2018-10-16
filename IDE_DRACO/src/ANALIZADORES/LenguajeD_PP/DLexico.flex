@@ -30,6 +30,8 @@ Id = [:jletter:]["�"|"�"|"�"|"�"|"�"|[:jletterdigit:]|"_"|]*
 
 Cadena = [\"] [^\"]* [\"]
 
+Nulo   = "nulo" | "\'\\u0000\'"
+
 //Comentario1 = "/*" ["*"]* [^*] ~"*/" | "/*" ["*"]* "*/"
 //Comentario2 = "//" [^\r\n]* [^\r\n]
 
@@ -115,6 +117,8 @@ Cadena = [\"] [^\"]* [\"]
 <YYINITIAL> "verdadero" {return new Symbol(sym.VERDADERO, new token(yycolumn, yyline, yytext()));}
 
 
+<YYINITIAL> {Nulo} {return new Symbol(sym.NULO, new token(yycolumn, yyline, yytext()));}
+
 /*LITERALES VALORES*/
 <YYINITIAL> {Numero} {return new Symbol(sym.NUM_LITERAL, new token(yycolumn, yyline, yytext()));}
 
@@ -127,4 +131,4 @@ Cadena = [\"] [^\"]* [\"]
 
 {LineTerminator} {/* ignorar */}
 {WhiteSpace} {/* ignorar */}
-. {System.out.println(yyline+","+yycolumn+"=["+yytext()+"],"+yychar); }
+. {System.err.println(yyline+","+yycolumn+"=["+yytext()+"],"+yychar); }

@@ -34,7 +34,14 @@ cadena metodo2()
 
 entero  [][]metodo3()
 {
+    mientras(c>12)
+    {
+        imprimir("hola mundo");
+        ojb1.var1++;
+    }
 }
+
+
 
 
 
@@ -55,4 +62,8 @@ lllo = obj1.atr1.obj1.metodo(1,2,3,4);
 
 
 
+booleano ultima= 14==3? "hola" : "nada";
 
+
+
+caracter valornulo = '\u0000';

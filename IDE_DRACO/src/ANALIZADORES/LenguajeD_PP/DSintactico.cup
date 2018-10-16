@@ -26,7 +26,7 @@ parser code {:
 
 terminal token STRING_LITERAL,NUM_LITERAL,DECIMAL_LITERAL,ID,MAS,MENOS,POR,DIV,POT,INC,DEC,
 APAR,CPAR,ALLA,CLLA,ACORCH,CCORCH,COMA,PYC,DSPTS,IGUAL,IG_IG,MENQ,MENIQ,MAYQ,MAYIQ,DIF,OR,AND,NOT,CADENA,
-CARACTER,ENTERO,DECIMAL,BOOLEANO,FALSO,VERDADERO,ESTRUCT,
+CARACTER,ENTERO,DECIMAL,BOOLEANO,FALSO,VERDADERO,ESTRUCT,NULO,
 
 PTO,SIGNO_Q,SI,SINO,MIENTRAS,PARA,DETENER,
 CONTINUAR,RETORNAR,IMPRIMIR,VACIO,PRINCIPAL;
@@ -199,7 +199,8 @@ dato ::= STRING_LITERAL
         |NUM_LITERAL
         |DECIMAL_LITERAL
         |VERDADERO
-        |FALSO;
+        |FALSO
+        |NULO;
 //------------------------------------------------------------------------------
 
 
@@ -287,8 +288,8 @@ Actualizacion   ::= Simplificada;
 
 
 //================================SIMPLIFICADA==================================
-Simplificada    ::= ID INC
-                   |ID DEC;
+Simplificada    ::= Acceso INC
+                   |Acceso DEC;
 //==============================================================================
 
 
@@ -315,7 +316,7 @@ Sent_Retornar    ::= RETORNAR       PYC
 
 
 //================================IMPRIMIR======================================
-Sent_Imprimir    ::= IMPRIMIR ALLA expl CLLA PYC;
+Sent_Imprimir    ::= IMPRIMIR APAR expl CPAR PYC;
 //==============================================================================
 
 
@@ -332,12 +333,12 @@ Sentencias          ::= Sentencias Sentencia
 Sentencia           ::=  Sent_Si
                         |Sent_Mientras
                         |Sent_Para
-                        |Simplificada
                         |Sent_Detener
                         |Sent_Continuar
                         |Sent_Retornar
                         |Sent_Imprimir
-                        |Acceso;
+                        |Acceso
+                        |Simplificada PYC;
 //==============================================================================
 
 
