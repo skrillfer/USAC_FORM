@@ -68,6 +68,9 @@ Cadena = [\"] [^\"]* [\"]
 <YYINITIAL> "[" {return new Symbol(sym.ACORCH, new token(yycolumn, yyline, yytext()));}
 <YYINITIAL> "]" {return new Symbol(sym.CCORCH, new token(yycolumn, yyline, yytext()));}
 
+<YYINITIAL> "{" {return new Symbol(sym.ALLA, new token(yycolumn, yyline, yytext()));}
+<YYINITIAL> "}" {return new Symbol(sym.CLLA, new token(yycolumn, yyline, yytext()));}
+
 <YYINITIAL> "," {return new Symbol(sym.COMA, new token(yycolumn, yyline, yytext()));}
 <YYINITIAL> ";" {return new Symbol(sym.PYC, new token(yycolumn, yyline, yytext()));}
 <YYINITIAL> ":" {return new Symbol(sym.DSPTS, new token(yycolumn, yyline, yytext()));}
@@ -76,6 +79,9 @@ Cadena = [\"] [^\"]* [\"]
 
 
 /*Palabras Reservadas*/
+/*Del Lenguaje*/
+<YYINITIAL> "estructura" {return new Symbol(sym.ESTRUCT, new token(yycolumn, yyline, yytext()));}
+
 
 /*TIPOS DE DATOS*/
 <YYINITIAL> "cadena" {return new Symbol(sym.CADENA, new token(yycolumn, yyline, yytext()));}

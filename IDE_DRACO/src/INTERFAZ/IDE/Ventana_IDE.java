@@ -63,4 +63,11 @@ public class Ventana_IDE extends JFrame{
         Interpretacion interpretar = new Interpretacion();
         interpretar.iniciar_interpretacion();
     }
+    
+    public int []arr1 ()
+    {
+        int arr []= new int[WIDTH];
+        return arr;
+    }
 }
+

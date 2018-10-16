@@ -25,12 +25,14 @@ parser code {:
 
 
 terminal token STRING_LITERAL,NUM_LITERAL,DECIMAL_LITERAL,ID,MAS,MENOS,POR,DIV,POT,INC,DEC,
-APAR,CPAR,ACORCH,CCORCH,COMA,PYC,DSPTS,IGUAL,IG_IG,MENQ,MENIQ,MAYQ,MAYIQ,DIF,OR,AND,NOT,CADENA,
-CARACTER,ENTERO,DECIMAL,BOOLEANO,FALSO,VERDADERO;
+APAR,CPAR,ALLA,CLLA,ACORCH,CCORCH,COMA,PYC,DSPTS,IGUAL,IG_IG,MENQ,MENIQ,MAYQ,MAYIQ,DIF,OR,AND,NOT,CADENA,
+CARACTER,ENTERO,DECIMAL,BOOLEANO,FALSO,VERDADERO,ESTRUCT;
 
 
 non terminal Nodo inicio,tipo_dato,lista_id,asignacion_var,expl,expr,expa,dato,
-                  cuerpo_documento,contenido_cuerpo,declaraciones,declaracion_variable;
+                  cuerpo_documento,contenido_cuerpo,declaraciones,declaracion_variable,declaracion_arreglo,
+                  asignacion,indices,indice,valores_arreglo,una_dimension,n_dimensiones,lista_dimensiones,
+                  lista_valores,declaracion_estructura,cuerpo_estructura,miembros;
 
 
 precedence left MAS, MENOS;
@@ -60,13 +62,64 @@ contenido_cuerpo ::= contenido_cuerpo declaraciones
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-declaraciones   ::= declaracion_variable;
+declaraciones   ::= declaracion_variable
+                    |declaracion_arreglo
+                    |declaracion_estructura
+                    |asignacion;
+//------------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------------
+declaracion_estructura ::= ESTRUCT ID  ALLA cuerpo_estructura CLLA ;
+
+
+
+cuerpo_estructura      ::= cuerpo_estructura miembros
+                          |miembros;
+
+
+miembros               ::= declaracion_variable
+                           |declaracion_arreglo
+                           |asignacion;
+
+
+//------------------------------------------------------------------------------
+asignacion      ::= ID IGUAL expl PYC;
 //------------------------------------------------------------------------------
 
 
 //------------------------------------------------------------------------------
 declaracion_variable ::= tipo_dato lista_id asignacion_var PYC
                         |ID        lista_id asignacion_var PYC;
+                        
+//------------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------------
+declaracion_arreglo ::= tipo_dato ID indices asignacion_var PYC
+                        |ID       ID indices asignacion_var PYC;
+//------------------------------------------------------------------------------
+
+
+
+//------------------------------------------------------------------------------
+indices ::= indices indice
+           |indice;
+
+indice  ::= ACORCH expl CCORCH;
+//------------------------------------------------------------------------------
+
+
+
+
+//------------------------------------------------------------------------------
+valores_arreglo   ::= una_dimension;
+
+
+una_dimension     ::= ALLA lista_valores CLLA;
+
+lista_valores     ::= lista_valores COMA expl
+                      |expl;
 //------------------------------------------------------------------------------
 
 
@@ -76,9 +129,9 @@ tipo_dato ::= ENTERO | DECIMAL | CARACTER | BOOLEANO | CADENA ;
 //------------------------------------------------------------------------------
 
 
-
+  
 //------------------------------------------------------------------------------
-lista_id ::= lista_id ID
+lista_id ::= lista_id COMA ID
             |ID;
 //------------------------------------------------------------------------------
 
@@ -116,7 +169,8 @@ expa ::= expa MAS expa
         |expa POT expa
         |MENOS expa
         |APAR expl CPAR
-        |dato;
+        |dato
+        |valores_arreglo;
 //------------------------------------------------------------------------------
 
 
@@ -128,3 +182,177 @@ dato ::= STRING_LITERAL
         |FALSO
         |ID;
 //------------------------------------------------------------------------------
+
+
+
+//================================Acceso========================================
+Acceso      ::= AccesoRecursivo;
+
+
+AccesoRecursivo   ::= AccesoRecursivo PTO tipoAcceso
+                    |tipoAcceso;
+
+tipoAcceso        ::= llamada;
+//==============================================================================
+
+
+//================================LLAMADA METODO================================
+llamada           ::= ID APAR    Lista_ValParams     CPAR;
+//==============================================================================
+
+
+
+//================================Lista Valores Parametros =====================
+Lista_ValParams   ::= {::}
+                      |ValParams;
+
+ValParams         ::= ValParams COMA expl
+                      |expl;
+//==============================================================================
+
+
+
+
+
+
+
+
+
+//################################SENTENCIAS CONTROL############################
+
+Sent_Ternario    ::= expl SIGNO_Q  expl  DSPTS  expl;
+
+//==================================SI==========================================
+Sent_Si          ::= SI APAR expl CPAR ALLA MuchasSentencias CLLA final_si;
+
+final_si         ::= {::}
+                     |muchos_sino_si sino
+                     |sino;
+
+//------------------------------------------------------------------------------
+muchos_sino_si   ::= muchos_sino_si sino_si
+                    |sino_si;
+
+sino_si          ::= SINO SI APAR expl CPAR ALLA MuchasSentencias CLLA;
+//------------------------------------------------------------------------------
+
+sino             ::= SINO ALLA MuchasSentencias CLLA;
+ 
+//==============================================================================
+
+
+
+
+
+//==================================MIENTRAS====================================
+Sent_Mientras    ::= MIENTRAS APAR  expl  CPAR  ALLA MuchasSentencias CLLA;
+//==============================================================================
+
+
+
+//==================================PARA========================================
+Sent_Para       ::= PARA APAR  Inicializacion PYC expl PYC Actualizacion  CPAR  ALLA MuchasSentencias CLLA;
+
+Inicializacion  ::= ENTERO ID  IGUAL expl
+                   |ID IGUAL expl;
+
+Actualizacion   ::= Simplificada;
+//==============================================================================
+
+
+
+//================================SIMPLIFICADA==================================
+Simplificada    ::= ID INC
+                   |ID DEC;
+//==============================================================================
+
+
+
+
+//================================DETENER=======================================
+Sent_Detener    ::= DETENER          PYC;
+//==============================================================================
+
+
+
+//================================CONTINUAR-====================================
+Sent_Continuar    ::= CONTINUAR      PYC;
+//==============================================================================
+
+
+
+//================================RETORNAR======================================
+Sent_Retornar    ::= RETORNAR       PYC
+                     |RETORNAR expl  PYC;
+//==============================================================================
+
+
+
+
+//================================IMPRIMIR======================================
+Sent_Imprimir    ::= IMPRIMIR ALLA expl CLLA PYC;
+//==============================================================================
+
+
+
+
+//================================MuchasSentencias==============================
+MuchasSentencias    ::= {::}
+                       |Sentencias;
+
+Sentencias          ::= Sentencias Sentencia
+                        |Sentencia;
+
+
+Sentencia           ::=  Sent_Si
+                        |Sent_Mientras
+                        |Sent_Para
+                        |Simplificada
+                        |Sent_Detener
+                        |Sent_Continuar
+                        |Sent_Retornar
+                        |Sent_Imprimir
+                        |Acceso;
+//==============================================================================
+
+
+
+//================================Declaracion Metodos===========================
+Metodo          ::= VACIO        ID     APAR Lista_Parametros CPAR ALLA MuchasSentencias CLLA
+
+                    |tipo_dato   ID  Muchos_SimArr   APAR Lista_Parametros CPAR ALLA MuchasSentencias CLLA
+
+
+                    |ID          ID  Muchos_SimArr   APAR Lista_Parametros CPAR ALLA MuchasSentencias CLLA
+                
+
+                    |VACIO PRINCIPAL APAR CPAR    ALLA MuchasSentencias  CLLA;
+
+
+
+Muchos_SimArr      ::= {::}
+                      |SimbolosArr;
+
+
+SimbolosArr        ::= SimbolosArr SimArr
+                       |SimArr;
+
+SimArr             ::= ACORCH CCORCH;
+//==============================================================================
+
+
+
+
+//================================Lista Parametros =============================
+Lista_Parametros   ::= {::}
+                      |Parametros;
+
+Parametros         ::= Parametros COMA Parametro
+                      |Parametro;
+
+
+Parametro          ::= tipo_dato ID;
+                      //tengo que consultar sobre los parametros tipo arreglo
+//==============================================================================
+
+
