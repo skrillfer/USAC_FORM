@@ -29,10 +29,11 @@ APAR,CPAR,ALLA,CLLA,ACORCH,CCORCH,COMA,PYC,DSPTS,IGUAL,IG_IG,MENQ,MENIQ,MAYQ,MAY
 CARACTER,ENTERO,DECIMAL,BOOLEANO,FALSO,VERDADERO,ESTRUCT,NULO,
 
 PTO,SIGNO_Q,SI,SINO,MIENTRAS,PARA,DETENER,
-CONTINUAR,RETORNAR,IMPRIMIR,VACIO,PRINCIPAL;
+CONTINUAR,RETORNAR,IMPRIMIR,VACIO,PRINCIPAL,
+PUNTO, CUADRADO, OVALO, LINEA;
 
 non terminal Nodo inicio,tipo_dato,lista_id,asignacion_var,expl,expr,expa,dato,
-                  cuerpo_documento,contenido_cuerpo,declaraciones,declaracion_variable,declaracion_arreglo,
+                  cuerpo_documento,contenido_cuerpo,declaraciones,declaracion_variable,
                   asignacion,indices,indice,valores_arreglo,una_dimension,
                   lista_valores,declaracion_estructura,cuerpo_estructura,miembros,
                   
@@ -46,7 +47,8 @@ non terminal Nodo inicio,tipo_dato,lista_id,asignacion_var,expl,expr,expa,dato,
                   Simplificada,Sent_Detener,Sent_Continuar,
                   Sent_Retornar,Sent_Imprimir,Metodo,Lista_Parametros,
                   Muchos_SimArr,SimArr,Parametros,
-                  Parametro,AccesoArray;
+                  Parametro,AccesoArray,MuchosIndices,Pintar_Punto,
+                  Pintar_Cuadrado,Pintar_Ovalo,Pintar_Cadena,Pintar_Linea,Funciones_Nativas;
 
 
 precedence left MAS, MENOS;
@@ -79,11 +81,13 @@ contenido_cuerpo ::= contenido_cuerpo declaraciones
 
 //------------------------------------------------------------------------------
 declaraciones   ::= declaracion_variable
-                    |declaracion_arreglo
+                    
                     |declaracion_estructura
                     |asignacion
                     |Metodo
-                    |Acceso PYC;
+                    |Acceso PYC
+                    |Simplificada PYC
+                    |Funciones_Nativas PYC;
 //------------------------------------------------------------------------------
 
 
@@ -97,7 +101,6 @@ cuerpo_estructura      ::= cuerpo_estructura miembros
 
 
 miembros               ::= declaracion_variable
-                           |declaracion_arreglo
                            |asignacion;
 
 
@@ -107,17 +110,10 @@ asignacion      ::= Acceso IGUAL expl PYC;
 
 
 //------------------------------------------------------------------------------
-declaracion_variable ::= tipo_dato lista_id asignacion_var PYC
-                        |ID        lista_id asignacion_var PYC;
+declaracion_variable ::= tipo_dato lista_id MuchosIndices asignacion_var PYC
+                        |ID        lista_id MuchosIndices asignacion_var PYC;
                         
 //------------------------------------------------------------------------------
-
-
-//------------------------------------------------------------------------------
-declaracion_arreglo ::= tipo_dato ID indices asignacion_var PYC
-                        |ID       ID indices asignacion_var PYC;
-//------------------------------------------------------------------------------
-
 
 
 //------------------------------------------------------------------------------
@@ -223,7 +219,11 @@ AccesoArray       ::= ID indices;
 
 
 //================================LLAMADA METODO================================
-llamada           ::= ID APAR    Lista_ValParams     CPAR;
+llamada           ::= ID APAR    Lista_ValParams     CPAR MuchosIndices; 
+
+
+MuchosIndices     ::={::}
+                    |indices;
 //==============================================================================
 
 
@@ -235,9 +235,6 @@ Lista_ValParams   ::= {::}
 ValParams         ::= ValParams COMA expl
                       |expl;
 //==============================================================================
-
-
-
 
 
 
@@ -337,8 +334,11 @@ Sentencia           ::=  Sent_Si
                         |Sent_Continuar
                         |Sent_Retornar
                         |Sent_Imprimir
-                        |Acceso
-                        |Simplificada PYC;
+                        |asignacion
+                        |Acceso PYC
+                        |Simplificada PYC
+                        |declaracion_variable
+                        |Funciones_Nativas PYC;
 //==============================================================================
 
 
@@ -379,8 +379,25 @@ Parametros         ::= Parametros COMA Parametro
                       |Parametro;
 
 
-Parametro          ::= tipo_dato ID;
-                      //tengo que consultar sobre los parametros tipo arreglo
+Parametro          ::= tipo_dato Muchos_SimArr  ID
+                      |ID        Muchos_SimArr  ID ;
+                      
 //==============================================================================
 
+
+//================================Funciones NATIVAS=============================
+
+
+Funciones_Nativas  ::= Pintar_Cadena | Pintar_Punto | Pintar_Cuadrado | Pintar_Ovalo  |  Pintar_Linea;
+
+Pintar_Punto       ::= PUNTO    APAR ValParams   CPAR;
+
+Pintar_Cuadrado    ::= CUADRADO APAR ValParams   CPAR;
+
+Pintar_Ovalo       ::= OVALO APAR ValParams   CPAR;
+
+Pintar_Cadena      ::= CADENA APAR ValParams   CPAR;
+
+Pintar_Linea       ::= LINEA    APAR ValParams   CPAR;
+//==============================================================================
 

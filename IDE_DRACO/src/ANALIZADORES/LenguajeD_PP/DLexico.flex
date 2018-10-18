@@ -84,6 +84,13 @@ Nulo   = "nulo" | "\'\\u0000\'"
 
 /*Palabras Reservadas*/
 /*Del Lenguaje*/
+
+/*Funcionas Nativas*/
+<YYINITIAL> "punto" {return new Symbol(sym.ESTRUCT, new token(yycolumn, yyline, yytext()));}
+<YYINITIAL> "cuadrado" {return new Symbol(sym.ESTRUCT, new token(yycolumn, yyline, yytext()));}
+<YYINITIAL> "ovalo" {return new Symbol(sym.ESTRUCT, new token(yycolumn, yyline, yytext()));}
+<YYINITIAL> "linea" {return new Symbol(sym.ESTRUCT, new token(yycolumn, yyline, yytext()));}
+
 <YYINITIAL> "estructura" {return new Symbol(sym.ESTRUCT, new token(yycolumn, yyline, yytext()));}
 
 <YYINITIAL> "si" {return new Symbol(sym.SI, new token(yycolumn, yyline, yytext()));}

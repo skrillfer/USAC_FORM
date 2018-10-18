@@ -32,7 +32,7 @@ cadena metodo2()
 {
 }
 
-entero  [][]metodo3()
+entero  [][]metodo3(entero [][]as)
 {
     mientras(c>12)
     {
@@ -67,3 +67,15 @@ booleano ultima= 14==3? "hola" : "nada";
 
 
 caracter valornulo = '\u0000';
+
+
+obj1.atribuo1++;
+
+metodo1();
+obje1.arr1()[2][3];
+
+
+
+
+cadena(12,3,3);
+
